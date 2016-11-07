@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\x86_84">
+      <UniqueIdentifier>{19729d06-c21b-4b75-923e-e8dec50d42c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="coroutine.h">
@@ -23,5 +26,10 @@
     <ClCompile Include="coroutine.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="stack.asm">
+      <Filter>Source Files\x86_84</Filter>
+    </None>
   </ItemGroup>
 </Project>
