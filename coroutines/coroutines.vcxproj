@@ -112,18 +112,15 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>
       </Outputs>
-      <Inputs>
-      </Inputs>
+      <Inputs>null</Inputs>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -174,18 +171,15 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>
       </Outputs>
-      <Inputs>
-      </Inputs>
+      <Inputs>null</Inputs>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
