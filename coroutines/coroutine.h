@@ -19,7 +19,7 @@ extern "C"
 	void* yield(context* ctx, void* datap);
 
 	// Starts a coroutine with a given context but doesn't begin executing it.
-	context* start(coroutine initdata, void* datap);
+	context* start(coroutine initdata);
 	// Performs context cleanup and completes execution
 	// of the coroutine
 	void destroy(context* ctx, void* datap);

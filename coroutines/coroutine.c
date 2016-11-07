@@ -100,14 +100,14 @@ char is_complete(const context* ctx)
 	return ctx->complete;
 }
 
-context* start(coroutine initdata, void* datap)
+context* start(coroutine initdata)
 {
 	context* ctx = malloc(sizeof(context));
 	ctx->coroutine.stack_start = malloc(initdata.stack_size);
 	ctx->coroutine.stack_pointer = NULL;
 	ctx->caller.stack_pointer = NULL;
 	ctx->complete = false;
-	ctx->datap = datap;
+	ctx->datap = NULL;
 
 	tmpinfo info = {
 		ADJUST_SP(initdata.stack_size, ctx->coroutine.stack_start),
