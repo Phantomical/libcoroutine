@@ -14,6 +14,8 @@
 // Information used to initialize the coroutine
 // this data will not persist beyond the first
 // yield
+#pragma pack(push)
+#pragma pack(1)
 typedef struct _tmpinfo
 {
 	void* stack_ptr;
@@ -21,13 +23,7 @@ typedef struct _tmpinfo
 	void(*funcptr)(void*);
 	context* ctx;
 } tmpinfo;
-
-// Switch to the given stack
-// new_stack_ptr: the top of the stack to switch to
-// old_stack_ptr: the current top of the stack
-void CALL_CONV jmp_stack(void* new_stack_ptr, void** old_stack_ptr);
-
-void CALL_CONV init_stack(tmpinfo* info, void** old_stack_ptr);
+#pragma pack(pop)
 
 struct _context
 {
@@ -44,7 +40,17 @@ struct _context
 	void* datap;
 };
 
-void CALL_CONV coroutine_init(tmpinfo* info)
+/* ASM Routines */
+// Switch to the given stack
+// new_stack_ptr: the top of the stack to switch to
+// old_stack_ptr: the current top of the stack
+void CALL_CONV jmp_stack(void* new_stack_ptr, void** old_stack_ptr);
+
+void CALL_CONV init_stack(const tmpinfo* info, void** old_stack_ptr);
+
+/* C routines */
+
+void CALL_CONV coroutine_init(const tmpinfo* info)
 {
 	// info stops being valid after we call yield
 	// so we have to save ctx now
