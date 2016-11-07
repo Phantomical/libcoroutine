@@ -14,12 +14,12 @@ extern "C"
 	} coroutine;
 
 	// Yields the coroutine and returns control to the caller
-	// passing datap back to the caller
-	void yield(void* datap, context* ctx);
+	// passing datap back to the caller. The return value is
+	// the pointer that was passed into the coroutine
+	void* yield(context* ctx, void* datap);
 
-	// Starts a coroutine with a given context
-	// and executes until the first yield call
-	context* start(coroutine coroutine, void* datap);
+	// Starts a coroutine with a given context but doesn't begin executing it
+	context* start(coroutine initdata, void* datap);
 	// Performs context cleanup and completes execution
 	// of the coroutine
 	void destroy(context* ctx, void* datap);
@@ -29,7 +29,7 @@ extern "C"
 	void* next(context* ctx, void* datap);
 
 	// Returns 1 if the coroutine is complete, 0 otherwise
-	char is_complete(context* ctx);
+	char is_complete(const context* ctx);
 #ifdef __cplusplus
 }
 #endif

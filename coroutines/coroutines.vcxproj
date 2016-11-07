@@ -18,6 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="coroutine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="coroutine.c" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0BB37B23-5AE6-47CB-A258-BD53CE454B8D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -126,9 +132,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
