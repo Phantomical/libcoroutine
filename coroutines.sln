@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "coroutines", "coroutines\coroutines.vcxproj", "{0BB37B23-5AE6-47CB-A258-BD53CE454B8D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo", "demo\demo.vcxproj", "{19F15587-5B7C-4A8E-A868-B33A6184DA15}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0BB37B23-5AE6-47CB-A258-BD53CE454B8D} = {0BB37B23-5AE6-47CB-A258-BD53CE454B8D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -129,7 +129,7 @@ void destroy(context* ctx, void* datap)
 	}
 
 	// Free up resources
-	abort(ctx);
+	abort_c(ctx);
 }
 void abort_c(context* ctx)
 {

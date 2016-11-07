@@ -25,10 +25,11 @@
     <ClCompile Include="coroutine.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="stack64.asm">
+    <CustomBuild Include="stack64.asm">
       <SubType>
       </SubType>
-    </None>
+      <FileType>Document</FileType>
+    </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0BB37B23-5AE6-47CB-A258-BD53CE454B8D}</ProjectGuid>
@@ -82,12 +83,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <CustomBuildBeforeTargets>
-    </CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>Compile</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <CustomBuildBeforeTargets>
-    </CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>Compile</CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -127,10 +126,21 @@
       </Command>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm
-</Command>
-      <Message>Building ASM files</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PreLinkEvent>
+    <Lib>
+      <AdditionalDependencies>$(ProjectDir)$(IntDir)stack.obj;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <CustomBuild>
+      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(IntDir)stack.obj;</Outputs>
+      <AdditionalInputs>stack64.asm</AdditionalInputs>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -178,10 +188,21 @@
       </Command>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm
-</Command>
-      <Message>Building ASM files</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PreLinkEvent>
+    <Lib>
+      <AdditionalDependencies>$(ProjectDir)$(IntDir)stack.obj;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <CustomBuild>
+      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
+    </CustomBuild>
+    <CustomBuild>
+      <Outputs>$(IntDir)stack.obj;</Outputs>
+      <AdditionalInputs>stack64.asm</AdditionalInputs>
+    </CustomBuild>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

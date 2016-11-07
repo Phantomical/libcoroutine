@@ -17,7 +17,7 @@ POPXMM    macro Source
 ; Arguments: (x64 calling convention)
 ;    RCX - new stack pointer (void*)
 ;    RDX - address of old stack pointer (void**)
-jmp_stack@16 proc
+jmp_stack proc
 	; Save callee-save xmm registers
 	PUSHXMM xmm15
 	PUSHXMM xmm14
@@ -66,7 +66,7 @@ jmp_stack@16 proc
 	POPXMM  xmm15
 
 	ret
-jmp_stack@16 endp
+jmp_stack endp
 
 ; init_stack:
 ;   Initializes the stack for the coroutine
@@ -74,7 +74,7 @@ jmp_stack@16 endp
 ; Arguments:
 ;   RCX - A pointer to a struct of type tmpinfo (tmpinfo*)
 ;   RDX - A pointer to a stack pointer (void**)
-init_stack@16 proc
+init_stack proc
 	mov  r8,  [rcx]    ; Load the stack pointer that we are to jump to
 	mov  r9,  [rcx+8]  ; Load the function pointer that we will call
 	mov  rax, rcx      ; Save a copy of the tmpinfo pointer
@@ -90,7 +90,7 @@ init_stack@16 proc
                        ; so that it returns to where it would
                        ; normally return in this function
 
-	call jmp_stack@16  ; Branch off to our new coroutine
+	call jmp_stack     ; Branch off to our new coroutine
 	                   ; This clobbers all non-volatile register
 					   ; and jumps to coroutine_start when starting
 					   ; the couroutine, returning as usual when
@@ -114,9 +114,9 @@ coroutine_start:       ; Our coroutine effectively starts here
 					   ; of the coroutine stack but it isn't
 					   ; being used so this is fine
 
-	call jmp_stack@16  ; Exit the coroutine
+	call jmp_stack     ; Exit the coroutine
 
 	int 3              ; If this gets executed then there is a bug in the program
-init_stack@16 endp
+init_stack endp
 
 END
