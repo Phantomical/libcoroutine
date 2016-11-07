@@ -11,11 +11,6 @@
 #	define CALL_CONV
 #endif
 
-// Switch to the given stack
-// new_stack_ptr: the top of the stack to switch to
-// old_stack_ptr: the current top of the stack
-void CALL_CONV jmp_stack(void* new_stack_ptr, void** old_stack_ptr);
-
 // Information used to initialize the coroutine
 // this data will not persist beyond the first
 // yield
@@ -26,6 +21,11 @@ typedef struct _tmpinfo
 	void(*funcptr)(void*);
 	context* ctx;
 } tmpinfo;
+
+// Switch to the given stack
+// new_stack_ptr: the top of the stack to switch to
+// old_stack_ptr: the current top of the stack
+void CALL_CONV jmp_stack(void* new_stack_ptr, void** old_stack_ptr);
 
 void CALL_CONV init_stack(tmpinfo* info, void** old_stack_ptr);
 
@@ -100,4 +100,24 @@ context* start(coroutine initdata, void* datap)
 		initdata.funcptr,
 		ctx
 	};
+
+	init_stack(&info, &ctx->caller.stack_pointer);
+
+	return ctx;
+}
+void destroy(context* ctx, void* datap)
+{
+	// Keep executing the coroutine until it is finished
+	while (!is_complete(ctx))
+	{
+		next(ctx, datap);
+	}
+
+	// Free up resources
+	abort(ctx);
+}
+void abort(context* ctx)
+{
+	free(ctx->coroutine.stack_start);
+	free(ctx);
 }
