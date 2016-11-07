@@ -17,7 +17,7 @@
 typedef struct _tmpinfo
 {
 	void* stack_ptr;
-	void(*internalfunc)(struct _tmpinfo*);
+	void(CALL_CONV *internalfunc)(struct _tmpinfo*);
 	void(*funcptr)(void*);
 	context* ctx;
 } tmpinfo;
@@ -44,7 +44,7 @@ struct _context
 	void* datap;
 };
 
-void coroutine_init(tmpinfo* info)
+void CALL_CONV coroutine_init(tmpinfo* info)
 {
 	// info stops being valid after we call yield
 	// so we have to save ctx now
