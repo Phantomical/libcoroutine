@@ -128,7 +128,7 @@
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm
-echo hi</Command>
+</Command>
       <Message>Building ASM files</Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
@@ -179,7 +179,7 @@ echo hi</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm
-echo hi</Command>
+</Command>
       <Message>Building ASM files</Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
