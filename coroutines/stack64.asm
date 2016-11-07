@@ -2,24 +2,33 @@
 
 .CODE
 
+PUSHXMM   macro Source
+	      sub     esp, 16
+	      movdqu  [esp], Source
+		  endm
+POPXMM    macro Source
+		  movdqu  Source, [esp]
+          add     esp, 16
+		  endm
+
 ; jmp_stack:
 ;    Switches between two stacks, saving all registers 
 ;    before changing the stack pointer
 ; Arguments: (x64 calling convention)
 ;    RCX - new stack pointer (void*)
 ;    RDX - address of old stack pointer (void**)
-PROC @16jmp_stack
+jmp_stack@16 proc
 	; Save callee-save xmm registers
-	push xmm15
-	push xmm14
-	push xmm13
-	push xmm12
-	push xmm11
-	push xmm10
-	push xmm9
-	push xmm8
-	push xmm7
-	push xmm6
+	PUSHXMM xmm15
+	PUSHXMM xmm14
+	PUSHXMM xmm13
+	PUSHXMM xmm12
+	PUSHXMM xmm11
+	PUSHXMM xmm10
+	PUSHXMM xmm9
+	PUSHXMM xmm8
+	PUSHXMM xmm7
+	PUSHXMM xmm6
 
 	; Save callee-save gp registers
 	push rbx
@@ -46,18 +55,18 @@ PROC @16jmp_stack
 	pop  rbx
 
 	; Restore xmm registers
-	pop  xmm6
-	pop  xmm7
-	pop  xmm8
-	pop  xmm9
-	pop  xmm10
-	pop  xmm11
-	pop  xmm12
-	pop  xmm14
-	pop  xmm15
+	POPXMM  xmm6
+	POPXMM  xmm7
+	POPXMM  xmm8
+	POPXMM  xmm9
+	POPXMM  xmm10
+	POPXMM  xmm11
+	POPXMM  xmm12
+	POPXMM  xmm14
+	POPXMM  xmm15
 
 	ret
-ENDP @16jmp_stack
+jmp_stack@16 endp
 
 ; init_stack:
 ;   Initializes the stack for the coroutine
@@ -65,22 +74,23 @@ ENDP @16jmp_stack
 ; Arguments:
 ;   RCX - A pointer to a struct of type tmpinfo (tmpinfo*)
 ;   RDX - A pointer to a stack pointer (void**)
-PROC @16init_stack
+init_stack@16 proc
 	mov  r8,  [rcx]    ; Load the stack pointer that we are to jump to
 	mov  r9,  [rcx+8]  ; Load the function pointer that we will call
 	mov  rax, rcx      ; Save a copy of the tmpinfo pointer
 	mov  rcx, r8       ; Set the stack pointer argument
 
-	add  rcx, 200      ; Add a bunch of free space to the stack
+	sub  rcx, 200      ; Add a bunch of free space to the stack
 	                   ; so that when jmp_stack pops off a whole bunch
 	                   ; of nonexistent variables we don't fall off the 
 	                   ; bottom of the stack. 200 = 16*8 + 8*8 + 8
 
-	mov  [rax], coroutine_start ; Set the return address for jmp_stack
-                                ; so that it returns to where it would
-                                ; normally return in this function
+	mov  r10, coroutine_start
+	mov  [rax], r10    ; Set the return address for jmp_stack
+                       ; so that it returns to where it would
+                       ; normally return in this function
 
-	call jmp_stack     ; Branch off to our new coroutine
+	call jmp_stack@16  ; Branch off to our new coroutine
 	                   ; This clobbers all non-volatile register
 					   ; and jumps to coroutine_start when starting
 					   ; the couroutine, returning as usual when
@@ -104,9 +114,9 @@ coroutine_start:       ; Our coroutine effectively starts here
 					   ; of the coroutine stack but it isn't
 					   ; being used so this is fine
 
-	call jmp_stack     ; Exit the coroutine
+	call jmp_stack@16  ; Exit the coroutine
 
 	int 3              ; If this gets executed then there is a bug in the program
-ENDP @16init_stack
+init_stack@16 endp
 
 END

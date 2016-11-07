@@ -11,6 +11,15 @@
 #	define CALL_CONV
 #endif
 
+/* Adjustment procedures for various architectures (Only necessary if the stack grows down) */
+#if defined(__amd64__) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
+#define ADJUST_SP(size, sp) (void*)((char*)sp + size)
+#elif defined (__i386__) || defined(__i386) || defined(_M_IX86) || defined(_X86_) || defined(__X86__) || defined(__THW_INTEL__) || defined(__I86__) || defined(__INTEL__) || defined(__386)
+#define ADJUST_SP(size, sp) (void*)((char*)sp + size)
+#else
+#error "Architectures other than x86 or x86-64 are not supported"
+#endif
+
 // Information used to initialize the coroutine
 // this data will not persist beyond the first
 // yield
@@ -18,7 +27,7 @@
 #pragma pack(1)
 typedef struct _tmpinfo
 {
-	void* stack_ptr;
+	void* stack_base;
 	void(CALL_CONV *internalfunc)(struct _tmpinfo*);
 	void(*funcptr)(void*);
 	context* ctx;
@@ -101,7 +110,7 @@ context* start(coroutine initdata, void* datap)
 	ctx->datap = datap;
 
 	tmpinfo info = {
-		ctx->coroutine.stack_start,
+		ADJUST_SP(initdata.stack_size, ctx->coroutine.stack_start),
 		&coroutine_init,
 		initdata.funcptr,
 		ctx
