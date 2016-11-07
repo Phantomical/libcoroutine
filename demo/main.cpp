@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void func(coroutine& c)
+void func(coroutine_wrapper& c)
 {
 	for (size_t i = 0; i < 100; ++i)
 		c.yield(i);
@@ -10,7 +10,7 @@ void func(coroutine& c)
 
 int main(int argc, char** argv)
 {
-	coroutine c{ 1024 * 1024, &func };
+	coroutine_wrapper c{ 1024 * 1024, &func };
 
 	while (!c.complete())
 	{

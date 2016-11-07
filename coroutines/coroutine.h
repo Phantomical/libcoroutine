@@ -29,7 +29,7 @@ extern "C"
 	// coroutine to never finish executing, this
 	// can cause memory leaks and essential cleanup
 	// to never be executed.
-	void abort(context* ctx);
+	void abort_c(context* ctx);
 
 	// Executes the coroutine to the next yield call
 	// with a provided data pointer. If the coroutine

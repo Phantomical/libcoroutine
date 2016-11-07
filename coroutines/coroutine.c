@@ -131,7 +131,7 @@ void destroy(context* ctx, void* datap)
 	// Free up resources
 	abort(ctx);
 }
-void abort(context* ctx)
+void abort_c(context* ctx)
 {
 	free(ctx->coroutine.stack_start);
 	free(ctx);

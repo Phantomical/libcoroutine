@@ -3,15 +3,15 @@
 #include "coroutine.h"
 #include <tuple>
 
-struct coroutine
+struct coroutine_wrapper
 {
 private:
 	context* ctx;
-	void(*func)(coroutine&);
+	void(*func)(coroutine_wrapper&);
 
 	static void coroutine_base(void* ptr)
 	{
-		coroutine* c = (coroutine*)ptr;
+		coroutine_wrapper* c = (coroutine_wrapper*)ptr;
 
 		c->yield(0);
 
@@ -33,7 +33,7 @@ public:
 		return ::is_complete(ctx);
 	}
 
-	coroutine(size_t stack_size, void(*func)(coroutine&)) :
+	coroutine_wrapper(size_t stack_size, void(*func)(coroutine_wrapper&)) :
 		ctx(nullptr),
 		func(func)
 	{
@@ -41,7 +41,7 @@ public:
 
 		::next(ctx, nullptr);
 	}
-	~coroutine()
+	~coroutine_wrapper()
 	{
 		::destroy(ctx, nullptr);
 	}
