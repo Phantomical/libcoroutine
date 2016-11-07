@@ -65,7 +65,7 @@ void CALL_CONV coroutine_init(const tmpinfo* info)
 	// we can execute the coroutine method
 	funcptr(datap);
 
-	// Inticate that the coroutine has completed
+	// Indicate that the coroutine has completed
 	ctx->complete = true;
 }
 
