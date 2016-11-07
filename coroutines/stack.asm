@@ -2,30 +2,6 @@
 
 .CODE
 
-PROC save_gp_regs
-	push rbx
-	push rsi
-	push rdi
-	push rbp
-	push r12
-	push r13
-	push r14
-	push r15
-	ret
-ENDP save_gp_regs
-
-PROC restore_gp_regs
-	pop  rbx
-	pop  rsi
-	pop  rdi
-	pop  rbp
-	pop  r12
-	pop  r13
-	pop  r14
-	pop  r15
-	ret
-ENDP restore_gp_regs
-
 ; jmp_stack:
 ;    Switches between two stacks, saving all registers 
 ;    before changing the stack pointer
