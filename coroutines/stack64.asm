@@ -3,12 +3,12 @@
 .CODE
 
 PUSHXMM   macro Source
-	      sub     esp, 16
-	      movdqu  [esp], Source
+	      sub     rsp, 16
+	      movdqu  [rsp], Source
 		  endm
 POPXMM    macro Source
-		  movdqu  Source, [esp]
-          add     esp, 16
+		  movdqu  Source, [rsp]
+          add     rsp, 16
 		  endm
 
 ; jmp_stack:
@@ -18,6 +18,19 @@ POPXMM    macro Source
 ;    RCX - new stack pointer (void*)
 ;    RDX - address of old stack pointer (void**)
 jmp_stack proc
+	mov r10, [rsp]
+	mov r11, [rdx]
+
+	; Save callee-save gp registers
+	push rbx
+	push rsi
+	push rdi
+	push rbp
+	push r12
+	push r13
+	push r14
+	push r15
+
 	; Save callee-save xmm registers
 	PUSHXMM xmm15
 	PUSHXMM xmm14
@@ -30,19 +43,21 @@ jmp_stack proc
 	PUSHXMM xmm7
 	PUSHXMM xmm6
 
-	; Save callee-save gp registers
-	push rbx
-	push rsi
-	push rdi
-	push rbp
-	push r12
-	push r13
-	push r14
-	push r15
-
 	; Actual code to switch the stacks
 	mov  [rdx], rsp  ; Save stack pointer to provided address
 	mov  rsp, rcx    ; Set stack pointer to given new stack pointer
+
+	; Restore xmm registers
+	POPXMM  xmm6
+	POPXMM  xmm7
+	POPXMM  xmm8
+	POPXMM  xmm9
+	POPXMM  xmm10
+	POPXMM  xmm11
+	POPXMM  xmm12
+	POPXMM  xmm13
+	POPXMM  xmm14
+	POPXMM  xmm15
 
 	; Restore General pupose registers
 	pop  r15
@@ -54,16 +69,8 @@ jmp_stack proc
 	pop  rsi
 	pop  rbx
 
-	; Restore xmm registers
-	POPXMM  xmm6
-	POPXMM  xmm7
-	POPXMM  xmm8
-	POPXMM  xmm9
-	POPXMM  xmm10
-	POPXMM  xmm11
-	POPXMM  xmm12
-	POPXMM  xmm14
-	POPXMM  xmm15
+	mov r10, [rsp]
+	mov r11, [rdx]
 
 	ret
 jmp_stack endp
@@ -80,13 +87,13 @@ init_stack proc
 	mov  rax, rcx      ; Save a copy of the tmpinfo pointer
 	mov  rcx, r8       ; Set the stack pointer argument
 
-	sub  rcx, 200      ; Add a bunch of free space to the stack
+	sub  rcx, 232      ; Add a bunch of free space to the coroutine stack
 	                   ; so that when jmp_stack pops off a whole bunch
 	                   ; of nonexistent variables we don't fall off the 
-	                   ; bottom of the stack. 200 = 16*8 + 8*8 + 8
+	                   ; bottom of the stack. 200 = 16*10 + 8*8 + 8 + 32 extra
 
 	mov  r10, coroutine_start
-	mov  [rax], r10    ; Set the return address for jmp_stack
+	mov [rcx+224], r10 ; Set the return address for jmp_stack
                        ; so that it returns to where it would
                        ; normally return in this function
 
@@ -104,10 +111,14 @@ coroutine_start:       ; Our coroutine effectively starts here
 	push rdx           ; Save return stack pointer address
 	push r8            ; Save the coroutine stack pointer
 	mov  rcx, rax      ; Load the tmpinfo pointer into rcx
+
+	sub esp, 32        ; Allocate shadow space for parameters
 	call r9            ; Call the coroutine function with rcx, rdx
+	add esp, 32        ; Free the shadow space for the parameters
 
 	pop  rdx           ; Retrieve coroutine stack pointer
 	pop  r9            ; Retrieve old stack pointer
+	sub  rdx, 8        ; Bring rdx back into the stack space
 
 	mov  rcx, [r9]     ; Get the top of the original stack
 	                   ; jmp_stack will clobber the bottom 
