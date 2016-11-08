@@ -54,9 +54,9 @@ PUBLIC @init_stack@8
 	                   ; of nonexistent variables we don't fall off the 
 	                   ; bottom of the stack. 20 = 4*4 + 4
 
-	mov  [ecx+12], esi ; Save the tmpinfo pointer so that it is
+	mov  [ecx+8], esi  ; Save the tmpinfo pointer so that it is
 	                   ; in the ESI register when the coroutine starts
-	mov  [ecx+16], ebx ; Save the function pointer that we will call so
+	mov  [ecx+12], ebx ; Save the function pointer that we will call so
 	                   ; that it is in the EBX register when the coroutine starts
 
 	mov  esi, coroutine_start
@@ -79,9 +79,9 @@ coroutine_start:       ; Our coroutine effectively starts here
 	
 	push edx           ; Save the return stack pointer address
 	push eax           ; Save the coroutine stack pointer
-	mov  ecx, eax      ; Load the tmpinfo pointer into ecx
+	mov  ecx, esi      ; Load the tmpinfo pointer into ecx
 
-	call esi           ; Call the coroutine function with ecx
+	call ebx           ; Call the coroutine function with the function pointer
 
 	pop  eax           ; Retrieve coroutine stack pointer
 	pop  edx           ; Retrieve old stack pointer

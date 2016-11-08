@@ -98,6 +98,15 @@
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Lib>
+    <CustomBuildStep>
+      <Outputs>null</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Inputs>null</Inputs>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>del stack.obj</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -141,6 +150,15 @@
       </AdditionalDependencies>
       <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
     </Lib>
+    <CustomBuildStep>
+      <Outputs>null</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Inputs>null</Inputs>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>del stack.obj</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
