@@ -114,7 +114,9 @@ char is_complete(const context* ctx)
 
 context* start(coroutine initdata)
 {
-	return start_with_mem(initdata, malloc(initdata.stack_size));
+	context* ctx = start_with_mem(initdata, malloc(initdata.stack_size));
+	ctx->external_mem = false;
+	return ctx;
 }
 context* start_with_mem(coroutine initdata, void* stackmem)
 {
@@ -123,6 +125,7 @@ context* start_with_mem(coroutine initdata, void* stackmem)
 	ctx->coroutine.stack_pointer = NULL;
 	ctx->caller.stack_pointer = NULL;
 	ctx->complete = false;
+	ctx->external_mem = true;
 	ctx->datap = NULL;
 
 	tmpinfo info = {
