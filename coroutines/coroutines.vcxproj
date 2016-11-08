@@ -31,6 +31,12 @@
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="stack32.asm">
+      <SubType>
+      </SubType>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0BB37B23-5AE6-47CB-A258-BD53CE454B8D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
