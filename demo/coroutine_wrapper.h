@@ -38,8 +38,7 @@ public:
 	{
 		return !!::is_complete(ctx);
 	}
-
-
+	
 	coroutine_wrapper(size_t stack_size, void(*func)(coroutine_wrapper&)) :
 		ctx(nullptr),
 		func(func)

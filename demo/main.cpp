@@ -1,30 +1,35 @@
-#include "coroutine_wrapper.h"
+#include "generator.h"
 
 #include <iostream>
 #include <vector>
 
-void func(coroutine_wrapper& c)
+void func(size_t start, size_t stop, size_t step)
 {
-	size_t v = 1;
-	for (size_t i = 1; i < 15; ++i)
-		c.yield(v *= i);
+	for (size_t i = start; i < stop; i += step)
+		yield(i);
+}
+
+template<typename T>
+gen_wrapper<T> range(T start, T stop, T step = 1)
+{
+	return make_generator<T>([=]
+	{
+		for (size_t i = start; i < stop; i += step)
+			yield(i);
+	}, 1024 * 1024);
 }
 
 int main(int argc, char** argv)
 {
-	void* mem = std::malloc(1024 * 1024);
-	coroutine_wrapper c{ 1024 * 1024, &func, mem };
-
-	std::vector<size_t> vals;
-
-	while (c.next())
+	auto gen = range<size_t>(0, 100, 1).gen;
+	if (!gen->complete())
 	{
-		vals.push_back(c.value());
+		do
+		{
+			std::cout << (gen->value()) << '\n';
+		} while (gen->next());
 	}
 
-	for (auto v : vals)
-		std::cout << v << '\n';
 	std::cout << std::endl;
 
-	free(mem);
 }
