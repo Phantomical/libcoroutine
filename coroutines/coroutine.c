@@ -129,6 +129,10 @@ context* start_with_mem(coroutine initdata, void* stackmem)
 	ctx->datap = NULL;
 
 	tmpinfo info = {
+		// Adjust stack pointer so that the stack grows into
+		// the buffer. This needs to happen because the stack
+		// can grow in different directions depending on the 
+		// CPU that this is running on.
 		ADJUST_SP(initdata.stack_size, ctx->coroutine.stack_start),
 		&coroutine_init,
 		initdata.funcptr,
