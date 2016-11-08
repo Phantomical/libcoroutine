@@ -24,20 +24,6 @@
   <ItemGroup>
     <ClCompile Include="coroutine.c" />
   </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="stack64.asm">
-      <SubType>
-      </SubType>
-      <FileType>Document</FileType>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="stack32.asm">
-      <SubType>
-      </SubType>
-      <FileType>Document</FileType>
-    </CustomBuild>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0BB37B23-5AE6-47CB-A258-BD53CE454B8D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -90,16 +76,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <CustomBuildBeforeTargets>Compile</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <CustomBuildBeforeTargets>Compile</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <CustomBuildBeforeTargets>Compile</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <CustomBuildBeforeTargets>Compile</CustomBuildBeforeTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,7 +103,8 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>ml /Cx /Fo "$(IntDir)stack.obj" /c stack32.asm</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <CustomBuild>
       <Outputs>$(IntDir)stack.obj;</Outputs>
@@ -132,7 +123,8 @@
       </Outputs>
     </CustomBuildStep>
     <Lib>
-      <AdditionalDependencies>$(ProjectDir)$(IntDir)stack.obj</AdditionalDependencies>
+      <AdditionalDependencies>asm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TargetDir)</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -150,15 +142,18 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <CustomBuildStep>
-      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>
       </Outputs>
-      <Inputs>null</Inputs>
+      <Inputs>
+      </Inputs>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -167,8 +162,9 @@
       </Message>
     </PreLinkEvent>
     <Lib>
-      <AdditionalDependencies>$(ProjectDir)$(IntDir)stack.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>asm.lib</AdditionalDependencies>
       <Verbose>true</Verbose>
+      <AdditionalLibraryDirectories>$(TargetDir)</AdditionalLibraryDirectories>
     </Lib>
     <CustomBuild>
       <Command>
@@ -195,7 +191,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>ml /Cx /Fo "$(IntDir)stack.obj" /c stack32.asm</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <CustomBuild>
       <Outputs>$(IntDir)stack.obj;</Outputs>
@@ -214,7 +211,8 @@
       </Outputs>
     </CustomBuildStep>
     <Lib>
-      <AdditionalDependencies>$(ProjectDir)$(IntDir)stack.obj</AdditionalDependencies>
+      <AdditionalDependencies>asm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TargetDir)</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -236,15 +234,18 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <CustomBuildStep>
-      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Outputs>
       </Outputs>
-      <Inputs>null</Inputs>
+      <Inputs>
+      </Inputs>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>ml64 /Cx /Fo "$(IntDir)stack.obj" /c stack64.asm</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -253,8 +254,9 @@
       </Message>
     </PreLinkEvent>
     <Lib>
-      <AdditionalDependencies>$(ProjectDir)$(IntDir)stack.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>asm.lib</AdditionalDependencies>
       <Verbose>true</Verbose>
+      <AdditionalLibraryDirectories>$(TargetDir)</AdditionalLibraryDirectories>
     </Lib>
     <CustomBuild>
       <Command>

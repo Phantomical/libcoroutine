@@ -4,11 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "coroutines", "coroutines\coroutines.vcxproj", "{0BB37B23-5AE6-47CB-A258-BD53CE454B8D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725} = {E138570C-BDBE-4F51-AB83-C1C7FC919725}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo", "demo\demo.vcxproj", "{19F15587-5B7C-4A8E-A868-B33A6184DA15}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0BB37B23-5AE6-47CB-A258-BD53CE454B8D} = {0BB37B23-5AE6-47CB-A258-BD53CE454B8D}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm", "asm\asm.vcxproj", "{E138570C-BDBE-4F51-AB83-C1C7FC919725}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +39,14 @@ Global
 		{19F15587-5B7C-4A8E-A868-B33A6184DA15}.Release|x64.Build.0 = Release|x64
 		{19F15587-5B7C-4A8E-A868-B33A6184DA15}.Release|x86.ActiveCfg = Release|Win32
 		{19F15587-5B7C-4A8E-A868-B33A6184DA15}.Release|x86.Build.0 = Release|Win32
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Debug|x64.ActiveCfg = Debug|x64
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Debug|x64.Build.0 = Debug|x64
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Debug|x86.ActiveCfg = Debug|Win32
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Debug|x86.Build.0 = Debug|Win32
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Release|x64.ActiveCfg = Release|x64
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Release|x64.Build.0 = Release|x64
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Release|x86.ActiveCfg = Release|Win32
+		{E138570C-BDBE-4F51-AB83-C1C7FC919725}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

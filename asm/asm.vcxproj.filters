@@ -13,8 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\x86">
+      <UniqueIdentifier>{1baab943-8b18-4c32-9173-97967e53d506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\x86-64">
+      <UniqueIdentifier>{334a27ac-e0e2-4917-9981-c628e4666b71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <None Include="stack32.asm">
+      <Filter>Source Files\x86</Filter>
+    </None>
+    <None Include="stack64.asm">
+      <Filter>Source Files\x86-64</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="stack.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
   </ItemGroup>
 </Project>
