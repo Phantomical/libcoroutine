@@ -20,13 +20,18 @@ extern "C"
 
 	// Starts a coroutine with a given context but doesn't begin executing it.
 	context* start(coroutine initdata);
+	// Starts a coroutine using the an external buffer for
+	// the stack space of the coroutine
+	// NOTE: If initdata.stack_size is greater than the size of the buffer
+	// then data before the buffer will be overwritten (on x86 and x86-64)
+	context* start_with_mem(coroutine initdata, void* stackmem);
 	// Performs context cleanup and completes execution
 	// of the coroutine
 	void destroy(context* ctx, void* datap);
 	// Performs context cleanup without completing
 	// execution of the coroutine.
 	// WARNING: Calling this method will cause the
-	// coroutine to never finish executing, this
+	// coroutine to never complete executing, this
 	// can cause memory leaks and essential cleanup
 	// to never be executed.
 	void abort_c(context* ctx);

@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <malloc.h>
+#include <assert.h>
 
 #if defined(_WIN32) && !defined(_WIN64)
 #	define CALL_CONV __fastcall
@@ -13,9 +14,13 @@
 
 /* Adjustment procedures for various architectures (Only necessary if the stack grows down) */
 #if defined(__amd64__) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
-#define ADJUST_SP(size, sp) (void*)((char*)sp + size)
+// AMD64 (x86-64) architecture
+#define ADJUST_SP(size, sp) ((void*)((char*)sp + size))
+#define VALID_SP(s_st, sp) ((uintptr_t)sp > (uintptr_t)s_st)
 #elif defined (__i386__) || defined(__i386) || defined(_M_IX86) || defined(_X86_) || defined(__X86__) || defined(__THW_INTEL__) || defined(__I86__) || defined(__INTEL__) || defined(__386)
-#define ADJUST_SP(size, sp) (void*)((char*)sp + size)
+// x86 architecture
+#define ADJUST_SP(size, sp) ((void*)((char*)sp + size))
+#define VALID_SP(s_st, sp) ((uintptr_t)sp > (uintptr_t)s_st)
 #else
 #error "Architectures other than x86 or x86-64 are not supported"
 #endif
@@ -36,7 +41,8 @@ typedef struct _tmpinfo
 
 struct _context
 {
-	char complete;
+	char complete : 1;
+	char external_mem : 1;
 	struct _x1
 	{
 		void* stack_pointer;
@@ -80,6 +86,12 @@ void CALL_CONV coroutine_init(const tmpinfo* info)
 
 void* yield(context* ctx, void* datap)
 {
+	// If this assert triggers then the coroutine stack has overflowed
+	// there isn't really any recovery that can be done here.
+	// The only solution is to increase the stack size of the 
+	// coroutine at creation time.
+	assert(ctx->coroutine.stack_pointer == NULL || VALID_SP(ctx->coroutine.stack_start, ctx->coroutine.stack_pointer));
+
 	ctx->datap = datap;
 	jmp_stack(ctx->caller.stack_pointer, &ctx->coroutine.stack_pointer);
 	return ctx->datap;
@@ -102,8 +114,12 @@ char is_complete(const context* ctx)
 
 context* start(coroutine initdata)
 {
+	return start_with_mem(initdata, malloc(initdata.stack_size));
+}
+context* start_with_mem(coroutine initdata, void* stackmem)
+{
 	context* ctx = malloc(sizeof(context));
-	ctx->coroutine.stack_start = malloc(initdata.stack_size);
+	ctx->coroutine.stack_start = stackmem;
 	ctx->coroutine.stack_pointer = NULL;
 	ctx->caller.stack_pointer = NULL;
 	ctx->complete = false;
@@ -133,6 +149,7 @@ void destroy(context* ctx, void* datap)
 }
 void abort_c(context* ctx)
 {
-	free(ctx->coroutine.stack_start);
+	if (!ctx->external_mem)
+		free(ctx->coroutine.stack_start);
 	free(ctx);
 }
