@@ -1,4 +1,4 @@
-; stack.asm - Implements jmp_stack and init_stack 
+; stack64.asm - Implements jmp_stack and init_stack for the x86-64 architecture
 
 .CODE
 
@@ -18,9 +18,6 @@ POPXMM    macro Source
 ;    RCX - new stack pointer (void*)
 ;    RDX - address of old stack pointer (void**)
 jmp_stack proc
-	mov r10, [rsp]
-	mov r11, [rdx]
-
 	; Save callee-save gp registers
 	push rbx
 	push rsi
@@ -69,9 +66,6 @@ jmp_stack proc
 	pop  rsi
 	pop  rbx
 
-	mov r10, [rsp]
-	mov r11, [rdx]
-
 	ret
 jmp_stack endp
 
@@ -90,7 +84,7 @@ init_stack proc
 	sub  rcx, 232      ; Add a bunch of free space to the coroutine stack
 	                   ; so that when jmp_stack pops off a whole bunch
 	                   ; of nonexistent variables we don't fall off the 
-	                   ; bottom of the stack. 200 = 16*10 + 8*8 + 8 + 32 extra
+	                   ; bottom of the stack. 232 = 16*10 + 8*8 + 8
 
 	mov  r10, coroutine_start
 	mov [rcx+224], r10 ; Set the return address for jmp_stack
@@ -112,9 +106,9 @@ coroutine_start:       ; Our coroutine effectively starts here
 	push r8            ; Save the coroutine stack pointer
 	mov  rcx, rax      ; Load the tmpinfo pointer into rcx
 
-	sub esp, 32        ; Allocate shadow space for parameters
-	call r9            ; Call the coroutine function with rcx, rdx
-	add esp, 32        ; Free the shadow space for the parameters
+	sub  rsp, 32       ; Allocate shadow space for parameters
+	call r9            ; Call the coroutine function with rcx
+	add  rsp, 32       ; Free the shadow space for the parameters
 
 	pop  rdx           ; Retrieve coroutine stack pointer
 	pop  r9            ; Retrieve old stack pointer
