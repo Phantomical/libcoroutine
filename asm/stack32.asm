@@ -3,6 +3,9 @@
 .MODEL FLAT, C
 .CODE
 
+PUBLIC @jmp_stack@8
+PUBLIC @init_stack@8
+
 ; jmp_stack:
 ;    Switches between two stacks, saving all registers 
 ;    before changing the stack pointer

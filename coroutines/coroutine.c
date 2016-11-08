@@ -59,9 +59,9 @@ struct _context
 // Switch to the given stack
 // new_stack_ptr: the top of the stack to switch to
 // old_stack_ptr: the current top of the stack
-void CALL_CONV jmp_stack(void* new_stack_ptr, void** old_stack_ptr);
+extern void CALL_CONV jmp_stack(void* new_stack_ptr, void** old_stack_ptr);
 
-void CALL_CONV init_stack(const tmpinfo* info, void** old_stack_ptr);
+extern void CALL_CONV init_stack(const tmpinfo* info, void** old_stack_ptr);
 
 /* C routines */
 

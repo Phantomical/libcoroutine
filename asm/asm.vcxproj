@@ -92,7 +92,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PreBuildEvent>
-      <Command>ml /Cx /Fo stack.obj /c stack32.asm</Command>
+      <Command>ml /coff /Fo stack.obj /c stack32.asm</Command>
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>
@@ -134,7 +134,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>ml /Cx /Fo stack.obj /c stack32.asm</Command>
+      <Command>ml /coff /Fo stack.obj /c stack32.asm</Command>
     </PreBuildEvent>
     <Lib>
       <AdditionalDependencies>
