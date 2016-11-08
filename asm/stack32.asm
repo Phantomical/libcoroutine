@@ -1,7 +1,9 @@
 ; stack32.asm - Implements jmp_stack and init_stack for the x86 architecture
 
-.MODEL FLAT, C
+.MODEL FLAT
 .CODE
+
+_TEXT segment
 
 PUBLIC @jmp_stack@8
 PUBLIC @init_stack@8
@@ -95,5 +97,7 @@ coroutine_start:       ; Our coroutine effectively starts here
 
 	int 3              ; Make sure that if jmp_stack actually returns we crash
 @init_stack@8 endp
+
+_TEXT ends
 
 END
