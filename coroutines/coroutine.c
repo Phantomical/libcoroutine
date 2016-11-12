@@ -41,8 +41,6 @@ typedef struct _tmpinfo
 
 struct _context
 {
-	char complete : 1;
-	char external_mem : 1;
 	struct _x1
 	{
 		void* stack_pointer;
@@ -53,6 +51,8 @@ struct _context
 		void* stack_pointer;
 	} caller;
 	void* datap;
+	char complete;
+	char external_mem;
 };
 
 /* ASM Routines */
