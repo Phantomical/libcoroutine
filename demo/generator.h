@@ -50,48 +50,6 @@ private:
 	}
 
 public:
-	class iterator
-	{
-	public:
-		typedef T value_type;
-		typedef const T& reference;
-		typedef const T* pointer;
-		typedef std::output_iterator_tag iterator_category;
-
-	private:
-		std::shared_ptr<generator<T>> ptr;
-		bool complete;
-
-	public:
-		iterator& operator++()
-		{
-			complete = ptr->next();
-
-			return *this;
-		}
-
-		const T& operator*() const
-		{
-			return ptr->value();
-		}
-
-		bool operator ==(const iterator& it) const
-		{
-			return it.complete == complete;
-		}
-		bool operator !=(const iterator& it) const
-		{
-			return !(*this == it);
-		}
-
-		iterator(std::shared_ptr<generator<T>> ptr, bool complete = false) :
-			ptr(ptr),
-			complete(complete)
-		{
-
-		}
-	};
-
 	void yield(const T& val)
 	{
 		T* ptr = const_cast<T*>(&val);
@@ -145,17 +103,55 @@ public:
 };
 
 template<typename T>
+struct generator_iterator
+{
+private:
+	std::shared_ptr<generator<T>> gen;
+
+	bool complete;
+
+public:
+	generator_iterator& operator++()
+	{
+		complete = !gen->next();
+
+		return *this;
+	}
+
+	const T& operator*() const
+	{
+		return gen->value();
+	}
+
+	bool operator==(const generator_iterator& it) const
+	{
+		return it.complete == complete && it.gen == gen;
+	}
+	bool operator!=(const generator_iterator& it) const
+	{
+		return !(it == *this);
+	}
+
+	generator_iterator(const std::shared_ptr<generator<T>>& gen, bool complete = false) :
+		gen(gen),
+		complete(complete || gen->complete())
+	{
+
+	}
+};
+
+template<typename T>
 struct gen_wrapper
 {
 	std::shared_ptr<generator<T>> gen;
 
-	typename generator<T>::iterator begin()
+	typename generator_iterator<T> begin()
 	{
-		return typename generator<T>::iterator{ gen };
+		return generator_iterator<T>{ gen, false };
 	}
-	typename generator<T>::iterator end()
+	typename generator_iterator<T> end()
 	{
-		return typename generator<T>::iterator{ gen, true };
+		return generator_iterator<T>{ gen, true };
 	}
 };
 
@@ -163,6 +159,11 @@ template<typename T>
 gen_wrapper<T> make_generator(const std::function<void()>& func, size_t stack_size = 1024 * 128)
 {
 	return{ std::make_shared<generator<T>>(func, stack_size) };
+}
+template<typename T>
+gen_wrapper<T> make_generator(const std::function<void()>& func, size_t stack_size, void* mem)
+{
+	return{ std::make_shared<generator<T>>(func, stack_size, mem) };
 }
 
 #ifndef GENERATOR_IMPL
