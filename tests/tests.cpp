@@ -33,6 +33,8 @@ TEST(run, yield_unmodified)
 			coroutine_next(ctx, reinterpret_cast<void*>(i))
 		));
 	}
+
+	coroutine_abort(ctx);
 }
 
 TEST(run, destroy_completes_coroutine)
@@ -74,6 +76,8 @@ TEST(run, is_complete_works)
 		EXPECT_EQ(i, reinterpret_cast<uintptr_t>(
 			coroutine_next(ctx, reinterpret_cast<void*>(i))
 			));
-		EXPECT_EQ((bool)coroutine_is_complete(ctx), i < 63);
+		EXPECT_EQ((bool)coroutine_is_complete(ctx), !(i < 63));
 	}
+
+	coroutine_abort(ctx);
 }
