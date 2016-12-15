@@ -76,8 +76,9 @@ TEST(run, is_complete_works)
 		EXPECT_EQ(i, reinterpret_cast<uintptr_t>(
 			coroutine_next(ctx, reinterpret_cast<void*>(i))
 			));
-		EXPECT_EQ((bool)coroutine_is_complete(ctx), !(i < 63));
+		EXPECT_EQ((bool)coroutine_is_complete(ctx), !(i < 64));
 	}
 
+	EXPECT_EQ((bool)coroutine_is_complete(ctx), true);
 	coroutine_abort(ctx);
 }
