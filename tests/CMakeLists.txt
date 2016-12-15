@@ -36,7 +36,10 @@ else()
 	target_link_libraries(tests 
 		"${GTEST_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
 	)
+	add_dependencies(tests gtest)
 endif()
+
+add_dependencies(tests coroutine)
 
 foreach(flag_var
         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
