@@ -1,6 +1,8 @@
 #include "coroutine.h"
 #include "gtest\gtest.h"
 
+#include <utility>
+
 void deterministic_test(void* arg)
 {
 	context* ctx = static_cast<context*>(arg);
@@ -8,6 +10,15 @@ void deterministic_test(void* arg)
 	{
 		coroutine_yield(ctx, reinterpret_cast<void*>(i));
 	}
+}
+
+void set_var(void* arg)
+{
+	std::pair<context*, int*>* vals = (std::pair<context*, int*>*)arg;
+
+	coroutine_yield(vals->first, nullptr);
+
+	*vals->second = 0xFFF;
 }
 
 TEST(run, yield_unmodified)
@@ -22,4 +33,32 @@ TEST(run, yield_unmodified)
 			coroutine_next(ctx, reinterpret_cast<void*>(i))
 		));
 	}
+}
+
+TEST(run, destroy_completes_coroutine)
+{
+	int r = 0;
+	std::pair<context*, int*> pair;
+	pair.first = coroutine_start({ 16382, &set_var });
+	pair.second = &r;
+
+	coroutine_next(pair.first, &pair);
+
+	coroutine_destroy(pair.first, nullptr);
+
+	ASSERT_EQ(pair.second, 0xFFF);
+}
+
+TEST(run, abort_does_not_complete)
+{
+	int r = 0;
+	std::pair<context*, int*> pair;
+	pair.first = coroutine_start({ 16382, &set_var });
+	pair.second = &r;
+
+	coroutine_next(pair.first, &pair);
+
+	coroutine_abort(pair.first);
+
+	ASSERT_NE(pair.second, 0xFFF);
 }
