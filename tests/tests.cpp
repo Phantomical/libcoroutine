@@ -46,7 +46,7 @@ TEST(run, destroy_completes_coroutine)
 
 	coroutine_destroy(pair.first, nullptr);
 
-	ASSERT_EQ(pair.second, 0xFFF);
+	ASSERT_EQ(r, 0xFFF);
 }
 
 TEST(run, abort_does_not_complete)
@@ -60,5 +60,5 @@ TEST(run, abort_does_not_complete)
 
 	coroutine_abort(pair.first);
 
-	ASSERT_NE(pair.second, 0xFFF);
+	ASSERT_NE(r, 0xFFF);
 }
