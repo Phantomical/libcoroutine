@@ -9,6 +9,8 @@ set(BUILD_TESTS TRUE CACHE BOOL "Whether to build the tests for the library.")
 
 enable_language(ASM_MASM)
 
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 # Library Dir
 add_subdirectory(coroutine)
 

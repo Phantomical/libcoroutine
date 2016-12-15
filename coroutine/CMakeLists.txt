@@ -1,4 +1,4 @@
-# CMake build script for asm subproject
+# CMake build script for libcoroutine
 
 cmake_minimum_required(VERSION 3.0)
 
@@ -25,7 +25,7 @@ if (NOT can_use_assembler)
 	message(FATAL_ERROR "MASM assembler is required for building the coroutine library.")
 endif()
 
-add_library(coroutine STATIC ${sources} ${c_sources})
+add_library(coroutine STATIC ${sources} ${c_sources} ${include_file})
 
 target_include_directories(coroutine PUBLIC 
 	"${CMAKE_CURRENT_SOURCE_DIR}/../include"
