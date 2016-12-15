@@ -32,7 +32,7 @@ gen_wrapper<T> range(T start, T stop, T step = 1)
 
 int main(int argc, char** argv)
 {
-	for (auto val : range<size_t>(0, 100))
+	for (auto val : range<size_t>(0, 10000000000000000))
 	{
 		std::cout << val << '\n';
 	}
