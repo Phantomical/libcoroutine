@@ -2,7 +2,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-project(coroutines)
+project(libcoroutine)
 
 set(BUILD_EXAMPLE_APP TRUE CACHE BOOL "Whether to build the example app.")
 set(BUILD_TESTS TRUE CACHE BOOL "Whether to build the tests for the library.")
