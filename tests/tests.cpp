@@ -62,3 +62,18 @@ TEST(run, abort_does_not_complete)
 
 	ASSERT_NE(r, 0xFFF);
 }
+
+TEST(run, is_complete_works)
+{
+	context* ctx = coroutine_start({ 16382, &deterministic_test });
+
+	EXPECT_EQ(0, reinterpret_cast<uintptr_t>(coroutine_next(ctx, ctx)));
+
+	for (uintptr_t i = 1; i < 64; ++i)
+	{
+		EXPECT_EQ(i, reinterpret_cast<uintptr_t>(
+			coroutine_next(ctx, reinterpret_cast<void*>(i))
+			));
+		EXPECT_EQ((bool)coroutine_is_complete(ctx), i < 63);
+	}
+}
