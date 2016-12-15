@@ -14,10 +14,12 @@ POPXMM    macro Source
 ; jmp_stack:
 ;    Switches between two stacks, saving all registers 
 ;    before changing the stack pointer
+;    This function complies to the microsoft
+;    x64 calling convention
 ; Arguments: (x64 calling convention)
 ;    RCX - new stack pointer (void*)
 ;    RDX - address of old stack pointer (void**)
-jmp_stack proc
+@@jmp_stack proc
 	; Save callee-save gp registers
 	push rbx
 	push rsi
@@ -67,15 +69,17 @@ jmp_stack proc
 	pop  rbx
 
 	ret
-jmp_stack endp
+@@jmp_stack endp
 
 ; init_stack:
 ;   Initializes the stack for the coroutine
 ;   to perform the initial switch
+;   This procedure complies to microsoft x64
+;   calling convention
 ; Arguments:
 ;   RCX - A pointer to a struct of type tmpinfo (tmpinfo*)
 ;   RDX - A pointer to a stack pointer (void**)
-init_stack proc
+@@init_stack proc
 	mov  r8,  [rcx]    ; Load the stack pointer that we are to jump to
 	mov  r9,  [rcx+8]  ; Load the function pointer that we will call
 	mov  rax, rcx      ; Save a copy of the tmpinfo pointer
@@ -91,7 +95,7 @@ init_stack proc
                        ; so that it returns to where it would
                        ; normally return in this function
 
-	call jmp_stack     ; Branch off to our new coroutine
+	call @@jmp_stack   ; Branch off to our new coroutine
 	                   ; This clobbers all non-volatile register
 					   ; and jumps to coroutine_start when starting
 					   ; the couroutine, returning as usual when
@@ -119,9 +123,17 @@ coroutine_start:       ; Our coroutine effectively starts here
 					   ; of the coroutine stack but it isn't
 					   ; being used so this is fine
 
-	call jmp_stack     ; Exit the coroutine
+	call @@jmp_stack   ; Exit the coroutine
 
 	int 3              ; If this gets executed then there is a bug in the program
-init_stack endp
+@@init_stack endp
+
+coroutine_jmp_stack proc
+	jmp @@jmp_stack
+coroutine_jmp_stack endp
+
+coroutine_init_stack proc
+	jmp @@init_stack
+coroutine_init_stack endp
 
 END
