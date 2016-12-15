@@ -16,7 +16,7 @@ void set_var(void* arg)
 {
 	std::pair<context*, int*>* vals = (std::pair<context*, int*>*)arg;
 
-	coroutine_yield(vals->first, nullptr);
+	(void)coroutine_yield(vals->first, nullptr);
 
 	*vals->second = 0xFFF;
 }
@@ -78,7 +78,8 @@ TEST(run, is_complete_works)
 			));
 		EXPECT_EQ((bool)coroutine_is_complete(ctx), !(i < 64));
 	}
+	(void)coroutine_next(ctx, nullptr);
 
 	EXPECT_EQ((bool)coroutine_is_complete(ctx), true);
-	coroutine_abort(ctx);
+	coroutine_destroy(ctx, nullptr);
 }
