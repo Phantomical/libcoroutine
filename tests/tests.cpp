@@ -134,3 +134,16 @@ TEST(start_with_mem, returns_null_on_zero_stack_size)
 
 	free(buffer);
 }
+
+TEST(start, returns_null_with_null_method)
+{
+	context* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, nullptr });
+
+	ASSERT_EQ(ctx, nullptr);
+}
+TEST(start, returns_null_on_zero_stack_size)
+{
+	context* ctx = coroutine_start({ 0, &set_var_before });
+
+	ASSERT_EQ(ctx, nullptr);
+}
