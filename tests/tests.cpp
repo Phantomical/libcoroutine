@@ -193,3 +193,15 @@ TEST(yield, returns_null_on_null)
 
 	ASSERT_EQ(nullptr, result);
 }
+
+TEST(is_complete, succeeds_with_null)
+{
+	// Check to see if this segfaults
+	(void)coroutine_is_complete(nullptr);
+
+	SUCCEED();
+}
+TEST(is_complete, returns_negative_one_on_null)
+{
+	ASSERT_EQ(-1, coroutine_is_complete(nullptr));
+}

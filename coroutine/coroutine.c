@@ -118,6 +118,12 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 
 char coroutine_is_complete(const context* ctx)
 {
+	if (!ctx)
+		// Rationale behind returning -1 on error:
+		//  - It is recognizable
+		//  - When in an if expression it evaluates to true
+		return -1;
+
 	return ctx->complete;
 }
 
