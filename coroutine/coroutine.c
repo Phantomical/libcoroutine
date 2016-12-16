@@ -21,6 +21,7 @@
 #elif (defined __GNUC__ || defined __clang__) && defined ARCH_X86_64
 #	define CALL_CONV ms_abi
 #else
+#	pragma warning "Unknown platform, the calling convention for the assembly routines may be incorrect"
 #	define CALL_CONV
 #endif
 
