@@ -14,7 +14,8 @@
 
 #if defined(_WIN32) && !defined(_WIN64)
 #	define CALL_CONV __fastcall
-#elif defined(_WIN64)
+#elif defined(_WIN32) && defined(_WIN64)
+// We use the microsoft x64 ABI in the assembly routines anyway
 #	define CALL_CONV
 #elif (defined __GNUC__ || defined __clang__) && defined ARCH_X86
 #	define CALL_CONV __fastcall

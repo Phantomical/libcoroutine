@@ -17,5 +17,5 @@ target_include_directories(tests PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 add_dependencies(tests coroutine)
 
-add_test(libcoroutine-tests tests $<TARGET_FILE:tests>)
+add_test(libcoroutine-tests tests COMMAND $<TARGET_FILE:tests>)
 
