@@ -78,6 +78,13 @@ extern void CALL_CONV coroutine_init_stack(const tmpinfo* info, void** old_stack
 
 void* coroutine_yield(context* ctx, void* datap)
 {
+	if (!ctx)
+		// If the user has gotten a corrupt context then this could cause
+		// them to loop indefinitely. However, there isn't anything we 
+		// could switch to. Also, returning NULL could be confusing, 
+		// but there isn't a better value to return. NULL is the least surprising.
+		return NULL;
+
 	// If this assert triggers then the coroutine stack has overflowed
 	// there isn't really any recovery that can be done here. It's already
 	// too late. The only solution is to increase the stack size of the 

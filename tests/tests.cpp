@@ -178,3 +178,18 @@ TEST(next, returns_null_on_null)
 
 	ASSERT_EQ(nullptr, result);
 }
+
+TEST(yield, succeeds_with_null)
+{
+	// Check to see if this crashes
+	(void)coroutine_yield(nullptr, nullptr);
+
+	// Yield didn't crash
+	SUCCEED();
+}
+TEST(yield, returns_null_on_null)
+{
+	void* result = coroutine_yield(nullptr, nullptr);
+
+	ASSERT_EQ(nullptr, result);
+}
