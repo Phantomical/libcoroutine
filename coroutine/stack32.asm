@@ -5,8 +5,16 @@
 
 _TEXT segment
 
-PUBLIC @jmp_stack@8
-PUBLIC @init_stack@8
+PUBLIC @coroutine_jmp_stack@8
+PUBLIC @coroutine_init_stack@8
+
+.safeseh SEH_handler
+
+SEH_handler   proc
+;handler
+ret
+
+SEH_handler   endp
 
 ; jmp_stack:
 ;    Switches between two stacks, saving all registers 
@@ -14,7 +22,7 @@ PUBLIC @init_stack@8
 ; Arguments: (__fastcall calling convention)
 ;    ECX - new stack pointer (void*)
 ;    EDX - address of old stack pointer (void**)
-@jmp_stack@8 proc
+jmp_stack proc
 	; Save gp registers
 	push ebx
 	push esi
@@ -32,7 +40,7 @@ PUBLIC @init_stack@8
 	pop  ebx
 
 	ret
-@jmp_stack@8 endp
+jmp_stack endp
 
 ; init_stack:
 ;   Initializes the stack for the coroutine
@@ -40,7 +48,7 @@ PUBLIC @init_stack@8
 ; Arguments:
 ;   ECX - A pointer to a struct of type tmpinfo (tmpinfo*)
 ;   EDX - A pointer to a stack pointer (void**)
-@init_stack@8 proc
+init_stack proc
 	push ebx
 	push esi
 
@@ -67,7 +75,7 @@ PUBLIC @init_stack@8
 	pop  esi           ; Restore normal parameters so that jmp_stack can save them
 	pop  ebx
 
-	call @jmp_stack@8  ; Branch off to our new coroutine
+	call jmp_stack     ; Branch off to our new coroutine
 	                   ; This clobbers all non-volatile register
 					   ; and jumps to coroutine_start when starting
 					   ; the couroutine, returning as usual when
@@ -93,10 +101,20 @@ coroutine_start:       ; Our coroutine effectively starts here
 					   ; doesn't matter because it will not
 					   ; be used again
 
-	call @jmp_stack@8  ; Exit the coroutine
+	call jmp_stack     ; Exit the coroutine
 
 	int 3              ; Make sure that if jmp_stack actually returns we crash
-@init_stack@8 endp
+init_stack endp
+
+; Forwarding stub for jmp_stack
+@coroutine_jmp_stack@8 proc
+	jmp jmp_stack
+@coroutine_jmp_stack@8 endp
+
+; Forwarding stub for init_stack
+@coroutine_init_stack@8 proc
+	jmp init_stack
+@coroutine_init_stack@8 endp
 
 _TEXT ends
 
