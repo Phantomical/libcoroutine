@@ -163,3 +163,18 @@ TEST(destroy, succeeds_with_null)
 	// If we reached here then we didn't segfault
 	SUCCEED();
 }
+
+TEST(next, succeeds_with_null)
+{
+	// Check to see if this crashes
+	(void)coroutine_next(nullptr, nullptr);
+
+	// If we get here it didn't crash
+	SUCCEED();
+}
+TEST(next, returns_null_on_null)
+{
+	void* result = coroutine_next(nullptr, nullptr);
+
+	ASSERT_EQ(nullptr, result);
+}

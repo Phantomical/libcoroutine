@@ -116,6 +116,12 @@ char coroutine_is_complete(const context* ctx)
 
 void* coroutine_next(context* ctx, void* datap)
 {
+	if (!ctx)
+		// If we don't have a context we should just return NULL.
+		// This is the most recognizable value and we should behave
+		// robustly in face of user errors. 
+		return NULL;
+
 	if (!coroutine_is_complete(ctx))
 	{
 		ctx->datap = datap;
