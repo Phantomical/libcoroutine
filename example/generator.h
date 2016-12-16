@@ -7,7 +7,7 @@
 
 template<typename T>
 class generator;
-typedef struct _context context;
+typedef struct _coroutine coroutine;
 
 
 namespace impl
@@ -15,12 +15,12 @@ namespace impl
 	template<typename T>
 	thread_local generator<T>* _generator;
 
-	void* yield(context* ctx, void* ptr);
-	void* next(context* ctx, void* ptr);
-	bool is_complete(const context* ctx);
+	void* yield(coroutine* ctx, void* ptr);
+	void* next(coroutine* ctx, void* ptr);
+	bool is_complete(const coroutine* ctx);
 
-	context* start(void(*func)(void*), size_t stack_size);
-	context* start(void(*func)(void*), size_t stack_size, void* stackmem);
+	coroutine* start(void(*func)(void*), size_t stack_size);
+	coroutine* start(void(*func)(void*), size_t stack_size, void* stackmem);
 }
 
 template<typename T>
@@ -33,7 +33,7 @@ private:
 		std::function<void()> func;
 	};
 
-	context* ctx;
+	coroutine* ctx;
 	const T* ptr;
 
 	static void coroutine_base(void* ptr)

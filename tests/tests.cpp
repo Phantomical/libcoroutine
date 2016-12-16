@@ -8,7 +8,7 @@
 
 void deterministic_test(void* arg)
 {
-	context* ctx = static_cast<context*>(arg);
+	coroutine* ctx = static_cast<coroutine*>(arg);
 	for (uintptr_t i = 0; i < DETERMINISTIC_REPEAT_TIMES; ++i)
 	{
 		coroutine_yield(ctx, reinterpret_cast<void*>(i));
@@ -17,7 +17,7 @@ void deterministic_test(void* arg)
 
 void set_var(void* arg)
 {
-	std::pair<context*, int*>* vals = (std::pair<context*, int*>*)arg;
+	std::pair<coroutine*, int*>* vals = (std::pair<coroutine*, int*>*)arg;
 
 	(void)coroutine_yield(vals->first, nullptr);
 
@@ -25,13 +25,13 @@ void set_var(void* arg)
 }
 void set_var_before(void* arg)
 {
-	std::pair<context*, int*>* vals = (std::pair<context*, int*>*)arg;
+	std::pair<coroutine*, int*>* vals = (std::pair<coroutine*, int*>*)arg;
 	*vals->second = 0xFFF;
 }
 
 TEST(run, yield_unmodified)
 {
-	context* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &deterministic_test });
+	coroutine* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &deterministic_test });
 
 	EXPECT_EQ(0, reinterpret_cast<uintptr_t>(coroutine_next(ctx, ctx)));
 
@@ -47,7 +47,7 @@ TEST(run, yield_unmodified)
 TEST(run, destroy_completes_coroutine)
 {
 	int r = 0;
-	std::pair<context*, int*> pair;
+	std::pair<coroutine*, int*> pair;
 	pair.first = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &set_var });
 	pair.second = &r;
 
@@ -60,7 +60,7 @@ TEST(run, destroy_completes_coroutine)
 TEST(run, abort_does_not_complete)
 {
 	int r = 0;
-	std::pair<context*, int*> pair;
+	std::pair<coroutine*, int*> pair;
 	pair.first = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &set_var });
 	pair.second = &r;
 
@@ -72,7 +72,7 @@ TEST(run, abort_does_not_complete)
 }
 TEST(run, is_complete)
 {
-	context* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &deterministic_test });
+	coroutine* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &deterministic_test });
 
 	EXPECT_EQ(0, reinterpret_cast<uintptr_t>(coroutine_next(ctx, ctx)));
 
@@ -91,10 +91,10 @@ TEST(run, is_complete)
 TEST(run, start_does_not_call_function)
 {
 	int i = 0;
-	context* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &set_var_before });
+	coroutine* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &set_var_before });
 	// Make sure that null is not returned
 	ASSERT_NE(ctx, nullptr);
-	std::pair<context*, int*> vals = { ctx, &i };
+	std::pair<coroutine*, int*> vals = { ctx, &i };
 	// Make sure i has not changed
 	ASSERT_EQ(i, 0);
 	coroutine_next(ctx, &vals);
@@ -106,7 +106,7 @@ TEST(run, start_does_not_call_function)
 
 TEST(start_with_mem, returns_null_on_null_memptr)
 {
-	context* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, &set_var }, nullptr);
+	coroutine* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, &set_var }, nullptr);
 
 	ASSERT_EQ(ctx, nullptr);
 }
@@ -116,7 +116,7 @@ TEST(start_with_mem, returns_null_with_null_method)
 
 	ASSERT_NE(buffer, nullptr);
 
-	context* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, nullptr }, buffer);
+	coroutine* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, nullptr }, buffer);
 
 	ASSERT_EQ(ctx, nullptr);
 
@@ -128,7 +128,7 @@ TEST(start_with_mem, returns_null_on_zero_stack_size)
 
 	ASSERT_NE(buffer, nullptr);
 
-	context* ctx = coroutine_start_with_mem({ 0, &set_var_before }, buffer);
+	coroutine* ctx = coroutine_start_with_mem({ 0, &set_var_before }, buffer);
 
 	ASSERT_EQ(ctx, nullptr);
 
@@ -137,13 +137,13 @@ TEST(start_with_mem, returns_null_on_zero_stack_size)
 
 TEST(start, returns_null_with_null_method)
 {
-	context* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, nullptr });
+	coroutine* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, nullptr });
 
 	ASSERT_EQ(ctx, nullptr);
 }
 TEST(start, returns_null_on_zero_stack_size)
 {
-	context* ctx = coroutine_start({ 0, &set_var_before });
+	coroutine* ctx = coroutine_start({ 0, &set_var_before });
 
 	ASSERT_EQ(ctx, nullptr);
 }

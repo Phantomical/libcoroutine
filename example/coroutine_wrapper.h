@@ -6,7 +6,7 @@
 struct coroutine_wrapper
 {
 private:
-	context* ctx;
+	coroutine* ctx;
 	void(*func)(coroutine_wrapper&);
 	size_t* ptr;
 
@@ -22,11 +22,11 @@ private:
 public:
 	void yield(size_t val)
 	{
-		::yield(ctx, &val);
+		coroutine_yield(ctx, &val);
 	}
 	bool next()
 	{
-		ptr = (size_t*)::next(ctx, nullptr);
+		ptr = (size_t*)coroutine_next(ctx, nullptr);
 		return !complete();
 	}
 	size_t value() const
@@ -36,27 +36,27 @@ public:
 
 	bool complete() const
 	{
-		return !!::is_complete(ctx);
+		return !!coroutine_is_complete(ctx);
 	}
 	
 	coroutine_wrapper(size_t stack_size, void(*func)(coroutine_wrapper&)) :
 		ctx(nullptr),
 		func(func)
 	{
-		ctx = ::start({ stack_size, &coroutine_base });
+		ctx = coroutine_start({ stack_size, &coroutine_base });
 
-		::next(ctx, this);
+		coroutine_next(ctx, this);
 	}
 	coroutine_wrapper(size_t stack_size, void(*func)(coroutine_wrapper&), void* mem) :
 		ctx(nullptr),
 		func(func)
 	{
-		ctx = ::start_with_mem({ stack_size, &coroutine_base }, mem);
+		ctx = coroutine_start_with_mem({ stack_size, &coroutine_base }, mem);
 
-		::next(ctx, this);
+		coroutine_next(ctx, this);
 	}
 	~coroutine_wrapper()
 	{
-		::destroy(ctx, nullptr);
+		coroutine_destroy(ctx, nullptr);
 	}
 };

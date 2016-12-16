@@ -35,22 +35,22 @@
 #define VALID_SP(s_st, sp) ((uintptr_t)sp > (uintptr_t)s_st)
 #endif
 
-// Information used to initialize the coroutine
-// this data will not persist beyond the first
-// yield
 #pragma pack(push)
 // Make sure it is arranged in packed bytes
 #pragma pack(1)
+// Information used to initialize the coroutine
+// this data will not persist beyond the first
+// yield
 typedef struct _tmpinfo
 {
 	void* stack_base;
 	void(CALL_CONV *internalfunc)(struct _tmpinfo*);
 	void(*funcptr)(void*);
-	context* ctx;
+	coroutine* ctx;
 } tmpinfo;
 #pragma pack(pop)
 
-struct _context
+struct _coroutine
 {
 	struct _x1
 	{
@@ -76,7 +76,7 @@ extern void CALL_CONV coroutine_init_stack(const tmpinfo* info, void** old_stack
 
 /* C routines */
 
-void* coroutine_yield(context* ctx, void* datap)
+void* coroutine_yield(coroutine* ctx, void* datap)
 {
 	if (!ctx)
 		// If the user has gotten a corrupt context then this could cause
@@ -101,7 +101,7 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 {
 	// info stops being valid after we call yield
 	// so we have to save ctx now
-	context* ctx = info->ctx;
+	coroutine* ctx = info->ctx;
 	// Same with funcptr
 	void(*funcptr)(void*) = info->funcptr;
 
@@ -116,18 +116,18 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 	ctx->complete = true;
 }
 
-char coroutine_is_complete(const context* ctx)
+char coroutine_is_complete(const coroutine* ctx)
 {
 	if (!ctx)
 		// Rationale behind returning -1 on error:
 		//  - It is recognizable
-		//  - When in an if expression it evaluates to true
+		//  - When in an if statement it evaluates to true
 		return -1;
 
 	return ctx->complete;
 }
 
-void* coroutine_next(context* ctx, void* datap)
+void* coroutine_next(coroutine* ctx, void* datap)
 {
 	if (!ctx)
 		// If we don't have a context we should just return NULL.
@@ -143,10 +143,10 @@ void* coroutine_next(context* ctx, void* datap)
 	return ctx->datap;
 }
 
-context* coroutine_start(coroutine initdata)
+coroutine* coroutine_start(coroutine_data initdata)
 {
 	void* buffer = malloc(initdata.stack_size);
-	context* ctx = coroutine_start_with_mem(initdata, buffer);
+	coroutine* ctx = coroutine_start_with_mem(initdata, buffer);
 
 	if (ctx != NULL)
 		ctx->external_mem = false;
@@ -156,7 +156,7 @@ context* coroutine_start(coroutine initdata)
 
 	return ctx;
 }
-context* coroutine_start_with_mem(coroutine initdata, void* stackmem)
+coroutine* coroutine_start_with_mem(coroutine_data initdata, void* stackmem)
 {
 	if (!stackmem) // Make sure we got a valid stack pointer
 		return NULL;
@@ -165,7 +165,7 @@ context* coroutine_start_with_mem(coroutine initdata, void* stackmem)
 	if (initdata.stack_size == 0) // Ensure that we want to create a stack with an actual size
 		return NULL;
 
-	context* ctx = malloc(sizeof(context));
+	coroutine* ctx = malloc(sizeof(coroutine));
 
 	if (!ctx) // Make sure malloc succeeded
 		return NULL;
@@ -192,7 +192,7 @@ context* coroutine_start_with_mem(coroutine initdata, void* stackmem)
 
 	return ctx;
 }
-void coroutine_destroy(context* ctx, void* datap)
+void coroutine_destroy(coroutine* ctx, void* datap)
 {
 	if (ctx != NULL)
 	{
@@ -206,7 +206,7 @@ void coroutine_destroy(context* ctx, void* datap)
 		coroutine_abort(ctx);
 	}
 }
-void coroutine_abort(context* ctx)
+void coroutine_abort(coroutine* ctx)
 {
 	if (ctx != NULL)
 	{
