@@ -126,13 +126,25 @@ void* coroutine_next(context* ctx, void* datap)
 
 context* coroutine_start(coroutine initdata)
 {
-	context* ctx = coroutine_start_with_mem(initdata, malloc(initdata.stack_size));
-	ctx->external_mem = false;
+	void* buffer = malloc(initdata.stack_size);
+	context* ctx = coroutine_start_with_mem(initdata, buffer);
+
+	if (ctx != NULL)
+		ctx->external_mem = false;
+	else if (buffer != NULL)
+		// Free buffer if coroutine creation failed
+		free(buffer);
+
 	return ctx;
 }
 context* coroutine_start_with_mem(coroutine initdata, void* stackmem)
 {
+	// Make sure we got a valid stack pointer
+	if (!stackmem || !initdata.funcptr)
+		return NULL;
+
 	context* ctx = malloc(sizeof(context));
+
 	ctx->coroutine.stack_start = stackmem;
 	ctx->coroutine.stack_pointer = NULL;
 	ctx->caller.stack_pointer = NULL;

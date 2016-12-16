@@ -4,11 +4,12 @@
 #include <utility>
 
 #define TEST_COROUTINE_STACK_SIZE 16384
+#define DETERMINISTIC_REPEAT_TIMES 4
 
 void deterministic_test(void* arg)
 {
 	context* ctx = static_cast<context*>(arg);
-	for (uintptr_t i = 0; i < 64; ++i)
+	for (uintptr_t i = 0; i < DETERMINISTIC_REPEAT_TIMES; ++i)
 	{
 		coroutine_yield(ctx, reinterpret_cast<void*>(i));
 	}
@@ -34,7 +35,7 @@ TEST(run, yield_unmodified)
 
 	EXPECT_EQ(0, reinterpret_cast<uintptr_t>(coroutine_next(ctx, ctx)));
 
-	for (uintptr_t i = 1; i < 64; ++i)
+	for (uintptr_t i = 1; i < DETERMINISTIC_REPEAT_TIMES; ++i)
 	{
 		EXPECT_EQ(i, reinterpret_cast<uintptr_t>(
 			coroutine_next(ctx, reinterpret_cast<void*>(i))
@@ -75,12 +76,12 @@ TEST(run, is_complete)
 
 	EXPECT_EQ(0, reinterpret_cast<uintptr_t>(coroutine_next(ctx, ctx)));
 
-	for (uintptr_t i = 1; i < 64; ++i)
+	for (uintptr_t i = 1; i < DETERMINISTIC_REPEAT_TIMES; ++i)
 	{
 		EXPECT_EQ(i, reinterpret_cast<uintptr_t>(
 			coroutine_next(ctx, reinterpret_cast<void*>(i))
 			));
-		EXPECT_TRUE(coroutine_is_complete(ctx) != 0);
+		EXPECT_FALSE(coroutine_is_complete(ctx) != 0);
 	}
 	(void)coroutine_next(ctx, nullptr);
 
@@ -101,4 +102,21 @@ TEST(run, start_does_not_call_function)
 	ASSERT_EQ(i, 0xFFF);
 
 	coroutine_abort(ctx);
+}
+
+TEST(start_with_mem, returns_null_on_null_memptr)
+{
+	context* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, &set_var }, nullptr);
+
+	ASSERT_EQ(ctx, nullptr);
+}
+TEST(start_with_mem, returns_null_with_null_method)
+{
+	void* buffer = malloc(TEST_COROUTINE_STACK_SIZE);
+
+	ASSERT_NE(buffer, nullptr);
+
+	context* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, nullptr }, buffer);
+
+	ASSERT_EQ(ctx, nullptr);
 }
