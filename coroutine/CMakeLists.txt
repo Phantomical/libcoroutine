@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.0)
 
 set(sources none)
 set(c_sources coroutine.c)
-set(include_file "${CMAKE_CURRENT_SOURCE_DIR}/../include/coroutine.h")
 set(can_use_assembler FALSE)
 
 include(TargetArch.cmake)
@@ -33,8 +32,3 @@ if (NOT can_use_assembler)
 endif()
 
 add_library(coroutine STATIC ${sources} ${c_sources} ${include_file})
-
-target_include_directories(coroutine PUBLIC 
-	"${CMAKE_CURRENT_SOURCE_DIR}/../include"
-)
-
