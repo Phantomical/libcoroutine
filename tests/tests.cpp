@@ -147,3 +147,19 @@ TEST(start, returns_null_on_zero_stack_size)
 
 	ASSERT_EQ(ctx, nullptr);
 }
+
+TEST(abort, succeeds_with_null)
+{
+	coroutine_abort(nullptr);
+
+	// If we reached here then we didn't segfault
+	SUCCEED();
+}
+
+TEST(destroy, succeeds_with_null)
+{
+	coroutine_destroy(nullptr, nullptr);
+
+	// If we reached here then we didn't segfault
+	SUCCEED();
+}

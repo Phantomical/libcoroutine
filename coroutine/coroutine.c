@@ -175,18 +175,24 @@ context* coroutine_start_with_mem(coroutine initdata, void* stackmem)
 }
 void coroutine_destroy(context* ctx, void* datap)
 {
-	// Keep executing the coroutine until it is finished
-	while (!coroutine_is_complete(ctx))
+	if (ctx != NULL)
 	{
-		coroutine_next(ctx, datap);
-	}
+		// Keep executing the coroutine until it is finished
+		while (!coroutine_is_complete(ctx))
+		{
+			coroutine_next(ctx, datap);
+		}
 
-	// Free up resources
-	coroutine_abort(ctx);
+		// Free up resources
+		coroutine_abort(ctx);
+	}
 }
 void coroutine_abort(context* ctx)
 {
-	if (!ctx->external_mem)
-		free(ctx->coroutine.stack_start);
-	free(ctx);
+	if (ctx != NULL)
+	{
+		if (!ctx->external_mem)
+			free(ctx->coroutine.stack_start);
+		free(ctx);
+	}
 }
