@@ -119,4 +119,18 @@ TEST(start_with_mem, returns_null_with_null_method)
 	context* ctx = coroutine_start_with_mem({ TEST_COROUTINE_STACK_SIZE, nullptr }, buffer);
 
 	ASSERT_EQ(ctx, nullptr);
+
+	free(buffer);
+}
+TEST(start_with_mem, returns_null_on_zero_stack_size)
+{
+	void* buffer = malloc(TEST_COROUTINE_STACK_SIZE);
+
+	ASSERT_NE(buffer, nullptr);
+
+	context* ctx = coroutine_start_with_mem({ 0, &set_var_before }, buffer);
+
+	ASSERT_EQ(ctx, nullptr);
+
+	free(buffer);
 }

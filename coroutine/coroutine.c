@@ -139,11 +139,17 @@ context* coroutine_start(coroutine initdata)
 }
 context* coroutine_start_with_mem(coroutine initdata, void* stackmem)
 {
-	// Make sure we got a valid stack pointer
-	if (!stackmem || !initdata.funcptr)
+	if (!stackmem) // Make sure we got a valid stack pointer
+		return NULL;
+	if (!initdata.funcptr) // Make sure that we were given a valid function pointer
+		return NULL;
+	if (initdata.stack_size == 0) // Ensure that we want to create a stack with an actual size
 		return NULL;
 
 	context* ctx = malloc(sizeof(context));
+
+	if (!ctx) // Make sure malloc succeeded
+		return NULL;
 
 	ctx->coroutine.stack_start = stackmem;
 	ctx->coroutine.stack_pointer = NULL;
