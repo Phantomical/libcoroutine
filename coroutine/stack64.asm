@@ -11,6 +11,19 @@ POPXMM    macro Source
           add     rsp, 16
 		  endm
 
+; Overview of MS x64 calling convention
+; Parameters:
+;    Integer Params: 
+;        rcx, rdx, r8, r9
+;    Floating Point Params:
+;        xmm0, xmm1, xmm2, xmm3
+;    Volatile Registers:
+;        rax, r10, r11, xmm4, xmm5
+;    Non-volatile Registers:
+;        All Other registers
+;    Stack Pointer:
+;        Aligned to 16 bytes (rsp)
+
 ; jmp_stack:
 ;    Switches between two stacks, saving all registers 
 ;    before changing the stack pointer
@@ -21,14 +34,15 @@ POPXMM    macro Source
 ;    RDX - address of old stack pointer (void**)
 @@jmp_stack proc
 	; Save callee-save gp registers
-	push rbx
-	push rsi
-	push rdi
-	push rbp
-	push r12
-	push r13
-	push r14
-	push r15
+	sub  rsp, 64  ; Allocate stack space
+	mov  [rsp+56], rbx
+	mov  [rsp+48], rsi
+	mov  [rsp+40], rdi
+	mov  [rsp+32], rbp
+	mov  [rsp+24], r12
+	mov  [rsp+16], r13
+	mov  [rsp+8],  r14
+	mov  [rsp],    r15
 
 	; Save callee-save xmm registers
 	PUSHXMM xmm15
