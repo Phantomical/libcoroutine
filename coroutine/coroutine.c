@@ -37,6 +37,11 @@
 #define VALID_SP(s_st, sp) ((uintptr_t)sp > (uintptr_t)s_st)
 #endif
 
+#ifndef NULL
+// Workaround for compilers that don't define NULL (vs2013)
+#define NULL ((void*)0)
+#endif
+
 #pragma pack(push)
 // Make sure it is arranged in packed bytes
 #pragma pack(1)
