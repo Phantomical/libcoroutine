@@ -1,6 +1,6 @@
 # CMake file for tests directory 
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 enable_testing()
 find_package(GTest QUIET)

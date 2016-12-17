@@ -1,7 +1,5 @@
 # CMake build script for libcoroutine
 
-cmake_minimum_required(VERSION 2.8)
-
 set(sources none)
 set(c_sources coroutine.c)
 set(can_use_assembler FALSE)
