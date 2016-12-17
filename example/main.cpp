@@ -23,7 +23,7 @@ void func(size_t start, size_t stop, size_t step)
 template<typename T>
 gen_wrapper<T> range(T start, T stop, T step = 1)
 {
-	static constexpr size_t stack_size = 4096;
+	static const size_t stack_size = 4096;
 	return make_generator<T>([=]
 	{
 		for (size_t i = start; i < stop; i += step)

@@ -13,7 +13,16 @@ typedef struct _coroutine coroutine;
 namespace impl
 {
 	template<typename T>
-	thread_local generator<T>* _generator;
+	struct gen_wrapper
+	{
+#if __cplusplus <= 199711
+		static generator<T>* _generator;
+#else 
+		thread_local generator<T>* _generator;
+#endif
+	};
+	template<typename T>
+	generator<T>* gen_wrapper<T>::_generator = NULL;
 
 	void* yield(coroutine* ctx, void* ptr);
 	void* next(coroutine* ctx, void* ptr);
@@ -24,7 +33,7 @@ namespace impl
 }
 
 template<typename T>
-class generator : std::enable_shared_from_this<generator<T>>
+class generator// : std::enable_shared_from_this<generator<T>>
 {
 private:
 	struct init_args
@@ -44,7 +53,7 @@ private:
 
 		args->gen->yield(T());
 
-		impl::_generator<T> = gen;
+		impl::gen_wrapper<T>::_generator = gen;
 
 		fn();
 	}
@@ -54,16 +63,16 @@ public:
 	{
 		T* ptr = const_cast<T*>(&val);
 
-		auto gen = impl::_generator<T>;
-		impl::_generator<T> = nullptr;
+		auto gen = impl::gen_wrapper<T>::_generator;
+		impl::gen_wrapper<T>::_generator = nullptr;
 		impl::yield(ctx, ptr);
-		impl::_generator<T> = gen;
+		impl::gen_wrapper<T>::_generator = gen;
 	}
 	bool next()
 	{
-		auto gen = impl::_generator<T>;
+		auto gen = impl::gen_wrapper<T>::_generator;
 		ptr = (const T*)impl::next(ctx, nullptr);
-		impl::_generator<T> = gen;
+		impl::gen_wrapper<T>::_generator = gen;
 		return !complete();
 	}
 	const T& value() const
@@ -171,8 +180,8 @@ template<typename T>
 void yield(const T& val)
 {
 	// Check to make sure that we are executing a coroutine
-	assert(impl::_generator<T> != nullptr);
+	assert(impl::gen_wrapper<T>::_generator != nullptr);
 
-	impl::_generator<T>->yield(val);
+	impl::gen_wrapper<T>::_generator->yield(val);
 }
 #endif
