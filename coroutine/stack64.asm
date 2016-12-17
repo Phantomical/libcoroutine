@@ -54,15 +54,16 @@
 
 	; Restore xmm registers
 	movdqu xmm6,  [rsp]    
-	movdqu xmm7,  [rsp+64+16]
-	movdqu xmm8,  [rsp+64+32]
-	movdqu xmm9,  [rsp+64+48]
-	movdqu xmm10, [rsp+64+64]
-	movdqu xmm11, [rsp+64+80]
-	movdqu xmm12, [rsp+64+96]
-	movdqu xmm13, [rsp+64+112]
-	movdqu xmm14, [rsp+64+128]
-	movdqu xmm15, [rsp+64+144]
+	movdqu xmm7,  [rsp+16]
+	movdqu xmm8,  [rsp+32]
+	movdqu xmm9,  [rsp+48]
+	movdqu xmm10, [rsp+64]
+	movdqu xmm11, [rsp+80]
+	movdqu xmm12, [rsp+96]
+	movdqu xmm13, [rsp+112]
+	movdqu xmm14, [rsp+128]
+	movdqu xmm15, [rsp+144]
+	add  rsp, 160
 
 	; Restore General pupose registers
 	mov  r15, [rsp]
@@ -73,7 +74,7 @@
 	mov  rdi, [rsp+40]
 	mov  rsi, [rsp+48]
 	mov  rbx, [rsp+56]
-	add  rsp, 244
+	add  rsp, 64
 
 	ret
 @@jmp_stack endp
