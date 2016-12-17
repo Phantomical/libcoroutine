@@ -2,11 +2,6 @@
 
 .CODE
 
-POPXMM    macro Source
-		  movdqu  Source, [rsp]
-          add     rsp, 16
-		  endm
-
 ; Overview of MS x64 calling convention
 ; Parameters:
 ;    Integer Params: 
@@ -58,16 +53,17 @@ POPXMM    macro Source
 	mov  rsp, rcx    ; Set stack pointer to given new stack pointer
 
 	; Restore xmm registers
-	POPXMM  xmm6
-	POPXMM  xmm7
-	POPXMM  xmm8
-	POPXMM  xmm9
-	POPXMM  xmm10
-	POPXMM  xmm11
-	POPXMM  xmm12
-	POPXMM  xmm13
-	POPXMM  xmm14
-	POPXMM  xmm15
+	movdqu [rsp],     xmm6
+	movdqu [rsp+16],  xmm7
+	movdqu [rsp+32],  xmm8
+	movdqu [rsp+48],  xmm9
+	movdqu [rsp+64],  xmm10
+	movdqu [rsp+80],  xmm11
+	movdqu [rsp+96],  xmm12
+	movdqu [rsp+112], xmm13
+	movdqu [rsp+128], xmm14
+	movdqu [rsp+144], xmm15
+	add  rsp, 160
 
 	; Restore General pupose registers
 	pop  r15
