@@ -1,6 +1,6 @@
 # CMake build script for libcoroutine
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 
 set(sources none)
 set(c_sources coroutine.c)
@@ -10,6 +10,9 @@ include(TargetArch.cmake)
 
 target_architecture(architecture)
 
+# Currently (version 3.7) NASM is bugged in cmake
+# and won't be built automatically in vs projects
+# For now we'll use MASM
 if ("${architecture}" MATCHES "i.86")
 	enable_language(ASM_MASM)
 	if (CMAKE_ASM_MASM_COMPILER_WORKS)

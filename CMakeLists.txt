@@ -1,13 +1,11 @@
 # Global CMake script for coroutine library
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 project(libcoroutine)
 
 set(BUILD_EXAMPLE_APP TRUE CACHE BOOL "Whether to build the example app.")
 set(BUILD_TESTS TRUE CACHE BOOL "Whether to build the tests for the library.")
-
-enable_language(ASM_MASM)
 
 enable_testing()
 
