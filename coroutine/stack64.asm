@@ -2,10 +2,6 @@
 
 .CODE
 
-PUSHXMM   macro Source
-	      sub     rsp, 16
-	      movdqu  [rsp], Source
-		  endm
 POPXMM    macro Source
 		  movdqu  Source, [rsp]
           add     rsp, 16
@@ -45,16 +41,17 @@ POPXMM    macro Source
 	mov  [rsp],    r15
 
 	; Save callee-save xmm registers
-	PUSHXMM xmm15
-	PUSHXMM xmm14
-	PUSHXMM xmm13
-	PUSHXMM xmm12
-	PUSHXMM xmm11
-	PUSHXMM xmm10
-	PUSHXMM xmm9
-	PUSHXMM xmm8
-	PUSHXMM xmm7
-	PUSHXMM xmm6
+	sub  rsp, 160 ; Allocate stack space
+	movdqu [rsp+144], xmm15
+	movdqu [rsp+128], xmm14
+	movdqu [rsp+112], xmm13
+	movdqu [rsp+96],  xmm12
+	movdqu [rsp+80],  xmm11
+	movdqu [rsp+64],  xmm10
+	movdqu [rsp+48],  xmm9
+	movdqu [rsp+32],  xmm8
+	movdqu [rsp+16],  xmm7
+	movdqu [rsp],     xmm6
 
 	; Actual code to switch the stacks
 	mov  [rdx], rsp  ; Save stack pointer to provided address
