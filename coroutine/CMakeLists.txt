@@ -3,6 +3,7 @@
 set(sources none)
 set(c_sources coroutine.c)
 set(can_use_assembler FALSE)
+set(include_file ${CMAKE_CURRENT_LIST_DIR}/../include/coroutine.h)
 
 include(TargetArch.cmake)
 

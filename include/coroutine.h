@@ -42,7 +42,8 @@ extern "C"
 	// value instead.
 	void* coroutine_next(coroutine* ctx, void* datap);
 
-	// Returns 1 if the coroutine is complete, 0 otherwise.
+	// Returns 1 if the coroutine is complete, 0 if it is not
+	// and -1 if ctx is NULL
 	char coroutine_is_complete(const coroutine* ctx);
 #ifdef __cplusplus
 }

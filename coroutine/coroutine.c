@@ -67,8 +67,8 @@ struct _coroutine
 		void* stack_pointer;
 	} caller;
 	void* datap;
-	char complete;
-	char external_mem;
+	unsigned char complete;
+	unsigned char external_mem;
 };
 
 /* ASM Routines */
