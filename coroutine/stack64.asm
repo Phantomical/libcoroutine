@@ -53,27 +53,28 @@
 	mov  rsp, rcx    ; Set stack pointer to given new stack pointer
 
 	; Restore xmm registers
-	movdqu [rsp],     xmm6
-	movdqu [rsp+16],  xmm7
-	movdqu [rsp+32],  xmm8
-	movdqu [rsp+48],  xmm9
-	movdqu [rsp+64],  xmm10
-	movdqu [rsp+80],  xmm11
-	movdqu [rsp+96],  xmm12
-	movdqu [rsp+112], xmm13
-	movdqu [rsp+128], xmm14
-	movdqu [rsp+144], xmm15
+	movdqu xmm6,  [rsp]    
+	movdqu xmm7,  [rsp+16]
+	movdqu xmm8,  [rsp+32]
+	movdqu xmm9,  [rsp+48]
+	movdqu xmm10, [rsp+64]
+	movdqu xmm11, [rsp+80]
+	movdqu xmm12, [rsp+96]
+	movdqu xmm13, [rsp+112]
+	movdqu xmm14, [rsp+128]
+	movdqu xmm15, [rsp+144]
 	add  rsp, 160
 
 	; Restore General pupose registers
-	pop  r15
-	pop  r14
-	pop  r13
-	pop  r12
-	pop  rbp
-	pop  rdi
-	pop  rsi
-	pop  rbx
+	mov  r15, [rsp]
+	mov  r14, [rsp+8]
+	mov  r13, [rsp+16]
+	mov  r12, [rsp+24]
+	mov  rbp, [rsp+32]
+	mov  rdi, [rsp+40]
+	mov  rsi, [rsp+48]
+	mov  rbx, [rsp+56]
+	add  rsp, 64
 
 	ret
 @@jmp_stack endp
@@ -103,7 +104,7 @@
                        ; normally return in this function
 
 	call @@jmp_stack   ; Branch off to our new coroutine
-	                   ; This clobbers all non-volatile register
+	                   ; This clobbers all non-volatile registers
 					   ; and jumps to coroutine_start when starting
 					   ; the couroutine, returning as usual when
 					   ; resumed from the coroutine
