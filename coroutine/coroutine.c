@@ -1,6 +1,6 @@
 #include "coroutine.h"
 
-#include <stdbool.h>
+#include <stddef.h>
 #include <malloc.h>
 #include <assert.h>
 
@@ -37,10 +37,8 @@
 #define VALID_SP(s_st, sp) ((uintptr_t)sp > (uintptr_t)s_st)
 #endif
 
-#ifndef NULL
-// Workaround for compilers that don't define NULL (vs2013)
-#define NULL ((void*)0)
-#endif
+#define TRUE 1
+#define FALSE 0
 
 #pragma pack(push)
 // Make sure it is arranged in packed bytes
@@ -120,7 +118,7 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 	funcptr(datap);
 
 	// Indicate that the coroutine has completed
-	ctx->complete = true;
+	ctx->complete = TRUE;
 }
 
 char coroutine_is_complete(const coroutine* ctx)
@@ -156,7 +154,7 @@ coroutine* coroutine_start(coroutine_data initdata)
 	coroutine* ctx = coroutine_start_with_mem(initdata, buffer);
 
 	if (ctx != NULL)
-		ctx->external_mem = false;
+		ctx->external_mem = FALSE;
 	else if (buffer != NULL)
 		// Free buffer if coroutine creation failed
 		free(buffer);
@@ -180,8 +178,8 @@ coroutine* coroutine_start_with_mem(coroutine_data initdata, void* stackmem)
 	ctx->coroutine.stack_start = stackmem;
 	ctx->coroutine.stack_pointer = NULL;
 	ctx->caller.stack_pointer = NULL;
-	ctx->complete = false;
-	ctx->external_mem = true;
+	ctx->complete = FALSE;
+	ctx->external_mem = TRUE;
 	ctx->datap = NULL;
 
 	tmpinfo info = {
