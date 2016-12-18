@@ -150,7 +150,6 @@ void* coroutine_yield(coroutine* ctx, void* datap)
 	return coroutine_unsafe_yield(ctx, datap);
 }
 
-
 char coroutine_is_complete(const coroutine* ctx)
 {
 	if (!ctx)

@@ -45,6 +45,15 @@ extern "C"
 	// Returns 1 if the coroutine is complete, 0 if it is not
 	// and -1 if ctx is NULL
 	char coroutine_is_complete(const coroutine* ctx);
+
+	// Performs the same operation as coroutine_yield but
+	// doesn't perform any sanity checks and will crash
+	// when given a coroutine that is not valid.
+	void* coroutine_unsafe_yield(coroutine* ctx, void* datap);
+	// Performs the same operation as coroutine_next but
+	// doesn't check to see if ctx is NULL or that the
+	// coroutine has finished executing.
+	void* coroutine_unsafe_next(coroutine* ctx, void* datap);
 #ifdef __cplusplus
 }
 #endif
