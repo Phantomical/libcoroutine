@@ -24,10 +24,11 @@ SEH_handler   endp
 ;    EDX - address of old stack pointer (void**)
 jmp_stack proc
 	; Save gp registers
-	push ebx
-	push esi
-	push edi
-	push ebp
+	sub  esp, 16
+	mov  [esp+12], ebx
+	mov  [esp+8],  esi
+	mov  [esp+4],  edi
+	mov  [esp],    ebp
 
 	; Actual code to switch the stacks
 	mov  [edx], esp  ; Sate stack pointer to given address
