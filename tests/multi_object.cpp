@@ -37,7 +37,7 @@ TEST(continue, sanity_check)
 	coroutine_next(co1, nullptr);
 
 	// co1 should have completed
-	coroutine_abort(co1);
+	coroutine_destroy(co1, nullptr);
 
 	// co2 should not have complete yet
 	// since it yielded to co1 before it finished
@@ -50,7 +50,7 @@ TEST(continue, sanity_check)
 	// co2 should be complete by now
 	EXPECT_TRUE(dat2.completed);
 
-	coroutine_abort(co2);
+	coroutine_destroy(co2, nullptr);
 }
 
 TEST(continue, returns_null_on_null_ctx)
@@ -69,4 +69,18 @@ TEST(continue, returns_null_on_null_next)
 	EXPECT_EQ(nullptr, coroutine_continue(co1, nullptr, nullptr));
 
 	coroutine_abort(co1);
+}
+
+TEST(continue, continue_to_self_works)
+{
+	coroutine* ctx = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &continue_func });
+
+	continue_data dat = { ctx, false };
+	(void)coroutine_next(ctx, &dat);
+	// Have to call next twice since continue_func yields
+	(void)coroutine_next(ctx, nullptr);
+
+	EXPECT_TRUE(dat.completed);
+
+	coroutine_destroy(ctx, nullptr);
 }
