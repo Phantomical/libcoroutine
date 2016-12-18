@@ -46,6 +46,10 @@ extern "C"
 	// and -1 if ctx is NULL
 	char coroutine_is_complete(const coroutine* ctx);
 
+	void* coroutine_continue(coroutine* ctx, coroutine* next, void* datap);
+
+	/* Unsafe API */
+
 	// Performs the same operation as coroutine_yield but
 	// doesn't perform any sanity checks and will crash
 	// when given a coroutine that is not valid.

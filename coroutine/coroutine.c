@@ -175,6 +175,18 @@ void* coroutine_next(coroutine* ctx, void* datap)
 	}
 	return ctx->datap;
 }
+void* coroutine_continue(coroutine* ctx, coroutine* next, void* datap)
+{
+	if (!ctx || !next)
+		return NULL;
+
+	next->caller.stack_pointer = ctx->caller.stack_pointer;
+
+	next->datap = datap;
+	// Jump stacks and set our own stack pointer. 
+	coroutine_jmp_stack(next->coroutine.stack_pointer, &ctx->coroutine.stack_pointer);
+	return ctx->datap;
+}
 
 coroutine* coroutine_start(coroutine_data initdata)
 {
