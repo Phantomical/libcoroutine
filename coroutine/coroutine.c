@@ -50,7 +50,7 @@ typedef struct _tmpinfo
 {
 	void* stack_base;
 	void(CALL_CONV *internalfunc)(struct _tmpinfo*);
-	void(*funcptr)(void*);
+	void(*funcptr)(coroutine*, void*);
 	coroutine* ctx;
 } tmpinfo;
 #pragma pack(pop)
@@ -122,7 +122,7 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 	// so we have to save ctx now
 	coroutine* ctx = info->ctx;
 	// Same with funcptr
-	void(*funcptr)(void*) = info->funcptr;
+	void(*funcptr)(coroutine*, void*) = info->funcptr;
 
 	// Yield and get the first value from the caller
 	// Unsafe yield is fine since we should not have
@@ -131,7 +131,7 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 
 	// Now that the caller has called next
 	// we can execute the coroutine method
-	funcptr(datap);
+	funcptr(ctx, datap);
 
 	// Indicate that the coroutine has completed
 	ctx->complete = TRUE;

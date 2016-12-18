@@ -10,7 +10,7 @@ extern "C"
 	typedef struct
 	{
 		size_t stack_size;
-		void(*funcptr)(void* datap);
+		void(*funcptr)(coroutine* ctx, void* datap);
 	} coroutine_data;
 
 	// Yields the coroutine and returns control to the caller
@@ -18,7 +18,7 @@ extern "C"
 	// the pointer that was passed into the coroutine.
 	void* coroutine_yield(coroutine* ctx, void* datap);
 
-	// Starts a coroutine with a given context but doesn't begin executing it.
+	// Creates a coroutine with a given context but doesn't begin executing it.
 	coroutine* coroutine_start(coroutine_data initdata);
 	// Starts a coroutine using the an external buffer for
 	// the stack space of the coroutine

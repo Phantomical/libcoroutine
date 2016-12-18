@@ -6,7 +6,7 @@
 #define TEST_COROUTINE_STACK_SIZE 16384
 #define DETERMINISTIC_REPEAT_TIMES 4
 
-void deterministic_test(void* arg)
+void deterministic_test(coroutine*, void* arg)
 {
 	coroutine* ctx = static_cast<coroutine*>(arg);
 	for (uintptr_t i = 0; i < DETERMINISTIC_REPEAT_TIMES; ++i)
@@ -15,7 +15,7 @@ void deterministic_test(void* arg)
 	}
 }
 
-void set_var(void* arg)
+void set_var(coroutine*, void* arg)
 {
 	std::pair<coroutine*, int*>* vals = (std::pair<coroutine*, int*>*)arg;
 
@@ -23,7 +23,7 @@ void set_var(void* arg)
 
 	*vals->second = 0xFFF;
 }
-void set_var_before(void* arg)
+void set_var_before(coroutine*, void* arg)
 {
 	std::pair<coroutine*, int*>* vals = (std::pair<coroutine*, int*>*)arg;
 	*vals->second = 0xFFF;
