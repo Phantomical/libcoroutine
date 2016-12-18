@@ -9,7 +9,7 @@
 #elif defined (__i386__) || defined(__i386) || defined(_M_IX86) || defined(_X86_) || defined(__X86__) || defined(__THW_INTEL__) || defined(__I86__) || defined(__INTEL__) || defined(__386)
 #	define ARCH_X86
 #else
-#error "Architectures other than x86 or x86-64 are not supported at this time"
+#error "Architectures other than x86 or x86-64 are not supported"
 #endif
 
 #if defined(_WIN32) && !defined(_WIN64)
@@ -81,24 +81,38 @@ extern void CALL_CONV coroutine_init_stack(const tmpinfo* info, void** old_stack
 
 /* C routines */
 
-void* coroutine_yield(coroutine* ctx, void* datap)
+// Yield without checking parameters
+void* coroutine_unsafe_yield(coroutine* ctx, void* datap)
 {
-	if (!ctx)
-		// If the user has gotten a corrupt context then this could cause
-		// them to loop indefinitely. However, there isn't anything we 
-		// could switch to. Also, returning NULL could be confusing, 
-		// but there isn't a better value to return. NULL is the least surprising.
-		return NULL;
+	assert(ctx != NULL);
 
 	// If this assert triggers then the coroutine stack has overflowed
 	// there isn't really any recovery that can be done here. It's already
 	// too late. The only solution is to increase the stack size of the 
 	// coroutine at creation time. Alternatively platform specific features
 	// can be used to build a large stack that doesn't use much actual memory.
-	assert(ctx->coroutine.stack_pointer == NULL || VALID_SP(ctx->coroutine.stack_start, ctx->coroutine.stack_pointer));
+	// NOTE: This assertion will not catch stack overflows that don't call coroutine_yield
+	assert(ctx->coroutine.stack_pointer == NULL || 
+		VALID_SP(ctx->coroutine.stack_start, ctx->coroutine.stack_pointer));
 
 	ctx->datap = datap;
 	coroutine_jmp_stack(ctx->caller.stack_pointer, &ctx->coroutine.stack_pointer);
+	return ctx->datap;
+}
+// Switch into coroutine without 
+void* coroutine_unsafe_next(coroutine* ctx, void* datap)
+{
+	// Calling this function with a NULL pointer violates the preconditions.
+	// If ctx can be null then use coroutine_next instead.
+	assert(ctx != NULL);
+
+	// For the sake of performance this function does not check if the coroutine
+	// is complete before jumping to it. In release mode this will cause the
+	// program to crash. 
+	assert(!coroutine_is_complete(ctx));
+
+	ctx->datap = datap;
+	coroutine_jmp_stack(ctx->coroutine.stack_pointer, &ctx->caller.stack_pointer);
 	return ctx->datap;
 }
 
@@ -111,7 +125,9 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 	void(*funcptr)(void*) = info->funcptr;
 
 	// Yield and get the first value from the caller
-	void* datap = coroutine_yield(ctx, NULL);
+	// Unsafe yield is fine since we should not have
+	// been able to get here if ctx is null
+	void* datap = coroutine_unsafe_yield(ctx, NULL);
 
 	// Now that the caller has called next
 	// we can execute the coroutine method
@@ -120,6 +136,20 @@ void CALL_CONV _coroutine_init_func(const tmpinfo* info)
 	// Indicate that the coroutine has completed
 	ctx->complete = TRUE;
 }
+
+/* External Interface */
+
+void* coroutine_yield(coroutine* ctx, void* datap)
+{
+	if (!ctx)
+		// If the user has gotten a corrupt context then this could cause
+		// them to loop indefinitely. However, there isn't anything we 
+		// could switch to. Also, returning NULL could be confusing, 
+		// but there isn't a better value to return. NULL is the least surprising.
+		return NULL;
+	return coroutine_unsafe_yield(ctx, datap);
+}
+
 
 char coroutine_is_complete(const coroutine* ctx)
 {
@@ -142,8 +172,7 @@ void* coroutine_next(coroutine* ctx, void* datap)
 
 	if (!coroutine_is_complete(ctx))
 	{
-		ctx->datap = datap;
-		coroutine_jmp_stack(ctx->coroutine.stack_pointer, &ctx->caller.stack_pointer);
+		return coroutine_unsafe_next(ctx, datap);
 	}
 	return ctx->datap;
 }
