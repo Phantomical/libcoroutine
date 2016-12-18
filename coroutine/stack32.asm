@@ -35,10 +35,11 @@ jmp_stack proc
 	mov  esp, ecx    ; Set stack pointer to new stack pointer
 
 	; Restore gp registers
-	pop  ebp
-	pop  edi
-	pop  esi
-	pop  ebx
+	mov  ebp, [esp]
+	mov  edi, [esp+4]
+	mov  esi, [esp+8]
+	mov  ebx, [esp+12]
+	add  esp, 16
 
 	ret
 jmp_stack endp
