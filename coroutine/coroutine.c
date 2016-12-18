@@ -180,6 +180,14 @@ void* coroutine_continue(coroutine* ctx, coroutine* next, void* datap)
 	if (!ctx || !next)
 		return NULL;
 
+	if (ctx == next)
+		// NOTE: It should be safe not to set next->datap here
+		// since there shouldn't be a way for user code to access
+		// it without having it set by yield, next or continue.
+		// If this assumption turns out to be invalid then 
+		// next->datap or ctx->datap should be set here as well.
+		return datap;
+
 	next->caller.stack_pointer = ctx->caller.stack_pointer;
 
 	next->datap = datap;
