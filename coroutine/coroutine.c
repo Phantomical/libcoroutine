@@ -180,6 +180,15 @@ void* coroutine_continue(coroutine* ctx, coroutine* next, void* datap)
 	if (!ctx || !next)
 		return NULL;
 
+	// If this assert triggers then the coroutine stack has overflowed
+	// there isn't really any recovery that can be done here. It's already
+	// too late. The only solution is to increase the stack size of the 
+	// coroutine at creation time. Alternatively platform specific features
+	// can be used to build a large stack that doesn't use much actual memory.
+	// NOTE: This assertion will not catch stack overflows that don't call coroutine_yield
+	assert(ctx->coroutine.stack_pointer == NULL ||
+		VALID_SP(ctx->coroutine.stack_start, ctx->coroutine.stack_pointer));
+
 	if (ctx == next)
 		// NOTE: It should be safe not to set next->datap here
 		// since there shouldn't be a way for user code to access
