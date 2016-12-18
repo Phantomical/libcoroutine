@@ -52,3 +52,21 @@ TEST(continue, sanity_check)
 
 	coroutine_abort(co2);
 }
+
+TEST(continue, returns_null_on_null_ctx)
+{
+	coroutine* co2 = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &continue_func });
+
+	EXPECT_EQ(nullptr, coroutine_continue(nullptr, co2, nullptr));
+
+	coroutine_abort(co2);
+
+}
+TEST(continue, returns_null_on_null_next)
+{
+	coroutine* co1 = coroutine_start({ TEST_COROUTINE_STACK_SIZE, &continue_func });
+
+	EXPECT_EQ(nullptr, coroutine_continue(co1, nullptr, nullptr));
+
+	coroutine_abort(co1);
+}
