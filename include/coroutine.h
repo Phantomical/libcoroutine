@@ -33,7 +33,9 @@ extern "C"
 	// WARNING: Calling this method will cause the
 	//   coroutine to never complete execution, this
 	//   can cause memory leaks and essential cleanup
-	//   to never be executed.
+	//   to never be executed. This has a high chance
+	//   of causing undefined behaviour if the coroutine
+	//   is designed with abortion in mind.
 	void coroutine_abort(coroutine* ctx);
 
 	// Executes the coroutine to the next yield call
