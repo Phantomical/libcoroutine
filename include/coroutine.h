@@ -51,8 +51,9 @@ extern "C"
 	/* Unsafe API */
 
 	// Performs the same operation as coroutine_yield but
-	// doesn't perform any sanity checks and will crash
-	// when given a coroutine that is not valid.
+	// doesn't perform any sanity checks and will cause 
+	// undefined behaviour when given a coroutine that is
+	// not valid.
 	void* coroutine_unsafe_yield(coroutine* ctx, void* datap);
 	// Performs the same operation as coroutine_next but
 	// doesn't check to see if ctx is NULL or that the
